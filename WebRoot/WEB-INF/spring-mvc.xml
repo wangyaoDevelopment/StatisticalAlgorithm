@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util" 
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+      http://www.springframework.org/schema/aop
+	  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+	  http://www.springframework.org/schema/tx
+	  http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+      http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+      http://www.springframework.org/schema/util
+      http://www.springframework.org/schema/util/spring-util.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/mvc
+      http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <!-- ViewResolver -->
+    <bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass"
+            value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/page/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    
+    <!-- 使用默认的注解映射 -->
+    <!-- <mvc:annotation-driven /> -->
+    
+     <mvc:annotation-driven>  
+        <mvc:message-converters>  
+            <bean class="com.sxkl.common.utils.UTF8StringHttpMessageConverter" />  
+        </mvc:message-converters>  
+    </mvc:annotation-driven>  
+    
+    <!--处理js/css/jpg/gif等静态资源访问不到的问题 -->
+    <mvc:default-servlet-handler/>
+    
+
+    <!-- 自动扫描controller包中的控制器 -->
+    <context:component-scan base-package="com" />
+    
+    <!-- 加入Aspectj配置 -->  
+    <!-- expose-proxy="true" 强制使用CGLIB代理 -->
+    <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true"/> 
+</beans>

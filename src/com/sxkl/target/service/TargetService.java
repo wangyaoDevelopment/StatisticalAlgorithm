@@ -1,0 +1,38 @@
+package com.sxkl.target.service;
+
+import java.util.List;
+
+import com.sxkl.score.model.Score;
+import com.sxkl.target.model.Target;
+import com.sxkl.target.model.TargetData;
+
+public interface TargetService {
+
+	public List<Target> listAllTarget();
+
+	public Target getTargetTree();
+	
+	public String setTargetWeight(String targetId,String markPlanId, double weight);
+	
+	public String addChildrenTarget(Target children,String parentId);
+	
+	public String deleteTargetById(String id);
+
+	public String addTarget(Target target, String id, String type);
+
+	public String deleteTarget(String id);
+
+	public String editTarget(Target target, String id);
+
+
+	public Target getScoreTargetTree(String markPlanId, String personId);
+
+	public Target recursiveSetTopScore(String id, double score, List<Score> scores, List<TargetData> targetDatas);
+
+	public Target getWeightTargetTree(String markPlanId, double mark);
+
+	public String checkMarkPlanWeight(String markPlanId);
+
+	public String getRootTargetList(int start, int limit);
+
+}
