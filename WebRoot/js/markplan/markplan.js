@@ -170,7 +170,7 @@ Ext.onReady(function(){
                height : 500,
                id : 'handleWin',
                modal : true,
-               width : 700,
+               width : 1000,
                closeAction : 'hide',
 			   resizable : false,
 		       closable : true,

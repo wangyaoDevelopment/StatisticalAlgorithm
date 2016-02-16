@@ -14,4 +14,6 @@ public interface ScoreService {
 
 	String getZFractionByUnLevelList(String markPlanId, String[] targetIds,String targetId, int start, int limit);
 
+	String statisticsCharByLevel(String markPlanId, int level);
+
 }

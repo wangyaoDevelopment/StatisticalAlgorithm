@@ -55,4 +55,10 @@ public class ScoreController {
 		}
 		return mv;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/statisticsCharByLevel.do",method=RequestMethod.POST,produces="application/json;charset=utf-8")
+	public String statisticsCharByLevel(String markPlanId,int level) {
+		return this.scoreServiceImpl.statisticsCharByLevel(markPlanId,level);
+	}
 }

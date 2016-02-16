@@ -30,9 +30,9 @@ Ext.onReady(function(){
             itemclick: function (record,node) {
             	var tabUrl;
             	if(node.data.id=='targetManagement'){
-            	   tabUrl = 'target_list.jsp';
+            	   tabUrl = 'page/target_list.jsp';
             	}else if(node.data.id=='markManagement'){
-            	   tabUrl = 'markplan.jsp';
+            	   tabUrl = 'page/markplan.jsp';
             	}
                 openTabPanel(node,tabUrl);
             }
@@ -46,7 +46,7 @@ Ext.onReady(function(){
         items: [{
             id: 'homePage',
             title: '我的主页',
-            autoLoad:{url:'z.jsp',scripts:true,nocache:true}
+            autoLoad:{url:'page/z.jsp',scripts:true,nocache:true}
         }]
 	});
 	

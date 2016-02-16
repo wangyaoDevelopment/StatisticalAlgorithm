@@ -1,5 +1,6 @@
 package com.sxkl.score.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -115,8 +116,8 @@ public class ScoreServiceImpl implements ScoreService{
 	 * @return 归一化分数
 	 */
 	private Map<Person, Double> getNormalizedScore(List<Person> persons,Map<Person, Double> standardVariance) {
-		double ymax = 1;
-		double ymin = 0;
+		double ymax = 100;
+		double ymin = 10;
 		Collection<Double> datas = standardVariance.values();
 		double xmax = Collections.max(datas);
 		double xmin = Collections.min(datas);
@@ -340,5 +341,46 @@ public class ScoreServiceImpl implements ScoreService{
 			
 		}
 		return new ArrayList<Target>(targets);
+	}
+
+	public String statisticsCharByLevel(String markPlanId, int level) {
+		List<Person> persons = personDaoImpl.getListPage(0, 3);
+		int personsNum = this.personDaoImpl.getListPageNum();
+		List<Target> levelTargets = targetDaoImpl.getTargetsByLevel(level);//指定层级子节点
+		List<Target> rootTargets = getRootTargetByLevel(levelTargets);
+		Map<Target,Map<Person,Double>> datas = getZFractionByLevel(persons,markPlanId,level,rootTargets);
+		
+		JSONArray series = new JSONArray();
+		String[] legendData = new String[persons.size()];
+		for(int i = 0; i < persons.size(); i++){
+			legendData[i] = persons.get(i).getName();
+			JSONObject seriesJson = new JSONObject();
+			seriesJson.put("name", persons.get(i).getName());
+			Double[] seriesData = new Double[rootTargets.size()];
+			for(int j = 0; j < rootTargets.size(); j++){
+				BigDecimal bd = new BigDecimal(datas.get(rootTargets.get(j)).get(persons.get(i)));  
+				seriesData[j] = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			}
+			seriesJson.put("data", seriesData);
+			series.add(seriesJson);
+		}
+		JSONArray legendDataArr = JSONArray.fromObject(legendData);
+		
+		String[] categoryData = new String[rootTargets.size()];
+		for(int i = 0; i < rootTargets.size(); i++){
+			categoryData[i] = rootTargets.get(i).getText();
+		}
+		JSONArray categoryDataArr = JSONArray.fromObject(categoryData);
+		
+		
+		JSONObject json = new JSONObject();
+		try {
+			json.put("legend", legendDataArr);
+			json.put("categories", categoryDataArr);
+			json.put("series", series);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return json.toString();
 	}
 }

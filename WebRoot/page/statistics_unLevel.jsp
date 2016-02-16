@@ -23,7 +23,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-    This is my JSP page. fffffffff<br>
-    ${markPlanId}
+      <script src="<%=basePath%>js/echarts/dist/echarts.js"></script>
+      <script type="text/javascript">
+	      var markPlanId = "${markPlanId}";
+	      var projectPath = '<%=basePath%>';
+	  </script>
+	  <script type="text/javascript" src="<%=basePath%>js/markplan/statistics_unlevel.js"></script>
+      <div id="tbar"></div>
+      <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+      <div id="main" style="height:450px"></div>
   </body>
 </html>
