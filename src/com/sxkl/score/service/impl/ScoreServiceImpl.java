@@ -344,8 +344,7 @@ public class ScoreServiceImpl implements ScoreService{
 	}
 
 	public String statisticsCharByLevel(String markPlanId, int level) {
-		List<Person> persons = personDaoImpl.getListPage(0, 3);
-		int personsNum = this.personDaoImpl.getListPageNum();
+		List<Person> persons = personDaoImpl.getAllPerson();
 		List<Target> levelTargets = targetDaoImpl.getTargetsByLevel(level);//指定层级子节点
 		List<Target> rootTargets = getRootTargetByLevel(levelTargets);
 		Map<Target,Map<Person,Double>> datas = getZFractionByLevel(persons,markPlanId,level,rootTargets);
@@ -371,7 +370,6 @@ public class ScoreServiceImpl implements ScoreService{
 			categoryData[i] = rootTargets.get(i).getText();
 		}
 		JSONArray categoryDataArr = JSONArray.fromObject(categoryData);
-		
 		
 		JSONObject json = new JSONObject();
 		try {

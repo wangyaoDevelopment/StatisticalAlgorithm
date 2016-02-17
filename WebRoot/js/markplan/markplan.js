@@ -168,7 +168,6 @@ Ext.onReady(function(){
 	    var statisticsChartByLevelWin = Ext.create('Ext.window.Window',{
 	           title : '图表层级统计',
                height : 500,
-               id : 'handleWin',
                modal : true,
                width : 1000,
                closeAction : 'hide',

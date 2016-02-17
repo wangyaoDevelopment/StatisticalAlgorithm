@@ -64,25 +64,12 @@ Ext.onReady(function(){
 	    	    ],
 	    	    series : []
 	    	};
-	    require.config({
-            paths: {
-                echarts: projectPath+'js/echarts/dist'
-            }
-        });
+	    // 基于准备好的dom，初始化echarts图表
+        myChart = echarts.init(document.getElementById('main')); 
+        // 为echarts对象加载数据 
+        myChart.setOption(option); 
         
-        require(
-            [
-                'echarts',
-                'echarts/chart/bar',
-                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
-            ],
-            function (ec) {
-                // 基于准备好的dom，初始化echarts图表
-                myChart = ec.init(document.getElementById('main')); 
-                // 为echarts对象加载数据 
-                myChart.setOption(option); 
-            }
-        );
+        
     }
     
     drawChart();
@@ -105,13 +92,13 @@ Ext.onReady(function(){
                     option.series = [];
                     Ext.Array.each(arr, function(v) {
                                 var name = v["name"];
-                                var lines = v["data"];
+                                var bars = v["data"];
                                 option.legend.data
                                         .push(name);
                                 option.series.push({
                                             name : name,
                                             type : 'bar',
-                                            data : lines
+                                            data : bars
                                         });
                             });
                     option.xAxis = [];
