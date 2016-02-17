@@ -80,7 +80,7 @@ Ext.onReady(function(){
             method : 'POST',
             params : {
                 markPlanId : markPlanId,
-                level : levelComboBox.getValue()
+                level : levelComboBox.getValue() || 1
             },
             callback : function(gd, success, resp) {
                 try {
@@ -93,8 +93,7 @@ Ext.onReady(function(){
                     Ext.Array.each(arr, function(v) {
                                 var name = v["name"];
                                 var bars = v["data"];
-                                option.legend.data
-                                        .push(name);
+                                option.legend.data.push(name);
                                 option.series.push({
                                             name : name,
                                             type : 'bar',
