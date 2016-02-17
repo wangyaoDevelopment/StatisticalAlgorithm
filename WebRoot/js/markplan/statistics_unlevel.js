@@ -63,7 +63,11 @@ Ext.onReady(function(){
 	    	        }
 	    	    ],
 	    	    series : []
+<<<<<<< HEAD
 	    	};//111111111111  
+=======
+	    	};
+>>>>>>> parent of 18950b0... 版本还原测试
 	    // 基于准备好的dom，初始化echarts图表
         myChart = echarts.init(document.getElementById('main')); 
         // 为echarts对象加载数据 
