@@ -367,4 +367,21 @@ public class TargetServiceImpl implements TargetService{
 		this.recursiveSetTopScore(target.getId(),markPlan.getMark(),markPlan,person,topScores);
 	}
 
+	public String getTargetsPageByIds(String[] targetIds, int start, int limit) {
+		JSONObject json = new JSONObject();
+		try {
+			List<Target> targets = targetDaoImpl.getTargetsPageByIds(targetIds,start,limit);
+			JsonConfig config = new JsonConfig();
+			config.setExcludes(new String[]{"root","parent","children","weight","topScore","score"});
+			JSONArray data = JSONArray.fromObject(targets,config);
+			json.put("data", data);
+			json.put("total", targetIds.length);
+			json.put("start", start);
+			json.put("limit", limit);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return json.toString();
+	}
+
 }

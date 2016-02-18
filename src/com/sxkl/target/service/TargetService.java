@@ -42,4 +42,6 @@ public interface TargetService {
 
 	public void checkTopScore(String markPlanId, String personId);
 
+	public String getTargetsPageByIds(String[] targetIds, int start, int limit);
+
 }

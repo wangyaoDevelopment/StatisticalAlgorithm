@@ -178,4 +178,23 @@ public class TargetDaoImpl extends HibernateDaoSupport implements TargetDao{
 		this.getHibernateTemplate().save(topScore);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Target> getTargetsPageByIds(final String[] targetIds, final int start,final int limit) {
+		final String hql = "from Target t where t.id in (:ids)";
+		List<Target> targets = (List<Target>) this.getHibernateTemplate().execute(new HibernateCallback(){
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query query = session.createQuery(hql);
+				query.setParameterList("ids", targetIds);
+		        query.setFirstResult(start);
+		        query.setMaxResults(limit);
+				List<Target> list = query.list();
+				if(list == null || list.size() == 0){
+					return new ArrayList<Target>();
+				}
+				return list;
+			}
+		});
+		return targets;
+	}
+	
 }

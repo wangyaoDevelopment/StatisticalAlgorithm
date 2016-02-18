@@ -44,4 +44,6 @@ public interface TargetDao {
 
 	public void addTopScore(TopScore topScore);
 
+	public List<Target> getTargetsPageByIds(String[] targetIds, int start,int limit);
+
 }

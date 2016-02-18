@@ -615,7 +615,11 @@ Ext.onReady(function(){
 			defaultType : "textfield",
 			items : [{ // 表单中的数字控件
 						fieldLabel : '得分',
-						name : 'score'
+						name : 'score',
+						allowBlank:false,
+	                    blankText:"不能为空！",
+						regex : /^[0-9]+([.]{1}[0-9]+){0,1}$/,
+						invalidText : '请输入数字！'
 					}]
 		});
 		
@@ -938,6 +942,14 @@ Ext.onReady(function(){
 						Ext.Msg.alert("提示", "请选择要需要统计的指标！");
 						return false;
 					}
+					var targetIdArr = new Array();
+					for(var i = 0; i < rows.length; i++){
+					     targetIdArr.push(rows[i].data.id);
+					}
+					rootTargetStore.getProxy().extraParams = { 
+		                 targetIds : targetIdArr
+		            };
+			        rootTargetStore.load();
 			        statisticsUnLevelListWin.show();
 			     }
 			}]
@@ -1007,11 +1019,11 @@ Ext.onReady(function(){
 		
 		var rootTargetStore = Ext.create("Ext.data.Store", {
 		    model: "MyApp.model.RootTarget",
-		    autoLoad: true,
+		    //autoLoad: true,
 		    pageSize: 13,
 		    proxy: {
 		        type: "ajax",
-		        url: projectName+"target/getRootTargetList.do",
+		        url: projectName+"target/getRootTargetListByIds.do",
 		        reader: {  
 	                type: "json",  
 	                root: "data",  

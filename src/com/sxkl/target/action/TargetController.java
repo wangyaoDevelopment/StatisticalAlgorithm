@@ -99,4 +99,10 @@ public class TargetController {
 		targetServiceImpl.checkTopScore(markPlanId,personId);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="/getRootTargetListByIds.do",method=RequestMethod.GET)
+	public String getRootTargetListByIds(String[] targetIds,int start, int limit){
+	    return targetServiceImpl.getTargetsPageByIds(targetIds,start,limit);
+	}
+	
 }
