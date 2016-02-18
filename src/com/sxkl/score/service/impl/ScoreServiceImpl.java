@@ -286,8 +286,10 @@ public class ScoreServiceImpl implements ScoreService{
 	}
 
 	public String getZFractionByLevelList(String markPlanId,String targetId,int level,int start, int limit) {
-		List<Person> persons = personDaoImpl.getListPage(start, limit);
-		int personsNum = this.personDaoImpl.getListPageNum();
+		MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+		//List<Person> persons = personDaoImpl.getListPage(start, limit);
+		List<Person> persons = new ArrayList<Person>(markPlan.getPersons());
+		int personsNum = persons.size();
 		List<Target> levelTargets = targetDaoImpl.getTargetsByLevel(level);//指定层级子节点
 		List<Target> rootTargets = getRootTargetByLevel(levelTargets);
 		Map<Target,Map<Person,Double>> datas = getZFractionByLevel(persons,markPlanId,level,rootTargets);
@@ -311,8 +313,10 @@ public class ScoreServiceImpl implements ScoreService{
 	}
 	
 	public String getZFractionByUnLevelList(String markPlanId,String[] targetIds,String targetId, int start, int limit) {
-		List<Person> persons = personDaoImpl.getListPage(start, limit);
-		int personsNum = this.personDaoImpl.getListPageNum();
+		MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+		//List<Person> persons = personDaoImpl.getListPage(start, limit);
+		List<Person> persons = new ArrayList<Person>(markPlan.getPersons());
+		int personsNum = persons.size();
 		List<Target> targets = targetDaoImpl.getTargetsByIds(targetIds);
 		Map<Target,Map<Person,Double>> datas = getZFractionByUnLevel(persons,markPlanId,targets);
 		Target targetTemp =this.targetDaoImpl.getTargetById(targetId);
@@ -348,7 +352,9 @@ public class ScoreServiceImpl implements ScoreService{
 	}
 
 	public String statisticsCharByLevel(String markPlanId, int level) {
-		List<Person> persons = personDaoImpl.getAllPerson();
+		
+		MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+		List<Person> persons = new ArrayList<Person>(markPlan.getPersons());
 		List<Target> levelTargets = targetDaoImpl.getTargetsByLevel(level);//指定层级子节点
 		List<Target> rootTargets = getRootTargetByLevel(levelTargets);
 		Map<Target,Map<Person,Double>> datas = getZFractionByLevel(persons,markPlanId,level,rootTargets);

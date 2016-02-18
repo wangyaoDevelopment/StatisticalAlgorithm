@@ -161,7 +161,7 @@ Ext.onReady(function(){
 	    ],
 	    listeners: {
 	        itemdblclick: function (me, record, item, index, e, eOpts) {
-	           checkMarkPlanWeight();
+	           personListWin.show();
 	        }
 	    }
 	});
@@ -199,8 +199,7 @@ Ext.onReady(function(){
 				if (success) {
 					var result = response.responseText;
 					if(result == '2'){
-					    //personListWin.show();
-						checkSamplingPopulation();
+					    personListWin.show();
 					    return;
 					}
 					if(result == '0'){
@@ -215,8 +214,7 @@ Ext.onReady(function(){
 									},
 									callback : function(options, success, response) {
 										if (success) {
-											//personListWin.show();
-											checkSamplingPopulation();
+											personListWin.show();
 										} else {
 											Ext.Msg.alert("提示", "系统繁忙");
 										}
@@ -228,8 +226,7 @@ Ext.onReady(function(){
 						});
 					}
 					if(result == '1'){
-					    //personListWin.show();
-						checkSamplingPopulation();
+					    personListWin.show();
 					}
 				} else {
 					Ext.Msg.alert("提示", "系统繁忙");
@@ -388,34 +385,6 @@ Ext.onReady(function(){
 				}]
 	});
 	
-	function checkSamplingPopulation(){
-		var markPlanRows = grid.getSelectionModel().getSelection();
-        var markPlanId = markPlanRows[0].data.id;
-	    Ext.Ajax.request({
-			method : "post",
-			url : projectName+'markplan/checkSamplingPopulation.do',
-			params : {
-				markPlanId : markPlanId
-			},
-			callback : function(options, success, response) {
-				if (success) {
-					var result = response.responseText;
-					if(result == '1'){
-					    personStore.getProxy().extraParams = {
-						    markPlanId : markPlanId
-						}
-						personStore.load();
-						personListWin.show();
-					}else{
-					    samplingPopulationWin.show();
-					}
-				} else {
-					Ext.Msg.alert("提示", "系统繁忙");
-				}
-			}
-		});
-	}
-	
 	//------------------------打分------------------------
 	
 	Ext.define("MyApp.model.Person",{
@@ -428,10 +397,11 @@ Ext.onReady(function(){
 	
 	var personStore = Ext.create("Ext.data.Store", {
 	    model: "MyApp.model.Person",
-	    //autoLoad: true,
+	    autoLoad: true,
+	    pageSize: 15,
 	    proxy: {
 	        type: "ajax",
-	        url: projectName+"markplan/selectedPersonList.do",
+	        url: projectName+"person/list.do",
 	        reader: {  
                 type: "json",  
                 root: "data",  
@@ -440,6 +410,13 @@ Ext.onReady(function(){
 	    }
 	});
 	
+	var personPagebar = Ext.create("Ext.toolbar.Paging", {  
+        store: personStore,  
+        displayInfo: true,  
+        displayMsg: "显示{0}-{1}条,共计{2}条",  
+        emptyMsg: "没有数据"  
+  
+    }); 
     
 	var personGrid = Ext.create("Ext.grid.Panel", {
 		//id : 'personGrid',
@@ -465,6 +442,8 @@ Ext.onReady(function(){
 				//openTargetTreeWin().show();
             }  
         }],  
+        //分页功能   
+        bbar: personPagebar, 
 	    selModel: {
 	        mode: "SINGLE"
 	    },
@@ -481,108 +460,6 @@ Ext.onReady(function(){
 	    }
 	});
 	
-	//--------------------选择采样人群-------------------------
-	Ext.define("MyApp.model.samplingPerson",{
-	     extend: "Ext.data.Model",
-         fields: [
-	        { name: 'id', type: 'string' },
-	        { name: 'name', type: 'string' }
-          ]
-	});
-	var samplingPopulationStore = Ext.create("Ext.data.Store", {
-	    model: "MyApp.model.samplingPerson",
-	    autoLoad: true,
-	    pageSize: 15,
-	    proxy: {
-	        type: "ajax",
-	        url: projectName+"person/list.do",
-	        reader: {  
-                type: "json",  
-                root: "data",  
-                totalProperty: "total"  
-            }  
-	    }
-	});
-	
-	var samplingPopulationPagebar = Ext.create("Ext.toolbar.Paging", {  
-        store: samplingPopulationStore,  
-        displayInfo: true,  
-        displayMsg: "显示{0}-{1}条,共计{2}条",  
-        emptyMsg: "没有数据"  
-  
-    }); 
-    
-	var samplingPopulationGrid = Ext.create("Ext.grid.Panel", {
-		//id : 'personGrid',
-	    xtype: "grid",
-	    store: samplingPopulationStore,
-	    width: 490,
-	    height: 470,
-	    columnLines: true,
-        rowLines: true,  
-        multiSelect: true,  
-        viewConfig: {  
-            forceFit: true,  
-            stripeRows: true //在表格中显示斑马线  
-        },
-	    selModel: {
-	        mode: "MULTI"
-	    },
-	    selType: "checkboxmodel",
-        bbar: samplingPopulationPagebar, 
-	    columns: [
-	        { text: 'ID', dataIndex: 'id',hidden:true },
-	        { text: '姓名', dataIndex: 'name', width:'95%' }
-	    ]
-	});
-	var samplingPopulationWin = Ext.create("Ext.window.Window",{
-		title : '选择采样人群',
-		width : 500,
-		height : 550,
-	    closeAction : 'hide', // 窗口关闭的方式：hide/close
-		resizable : false,
-		closable : true, // 是否可以关闭
-		modal : true, // 是否为模态窗口
-		items : samplingPopulationGrid,
-		buttons : [{
-		     text : '下一步',
-		     handler : function(){
-		     	setMarkPlanPerson();
-		     }
-		}]
-	});
-	
-	function setMarkPlanPerson(){
-	    var personRows = samplingPopulationGrid.getSelectionModel().getSelection();
-     	var personIds = new Array();
-     	for(var i = 0; i < personRows.length; i++){
-     	    personIds.push(personRows[i].data.id);
-     	}
-        var markPlanRows = grid.getSelectionModel().getSelection();
-        var markPlanId = markPlanRows[0].data.id;
-        Ext.Ajax.request({
-			method : "post",
-			url : projectName+'markplan/setMarkPlanPerson.do',
-			params : {
-				markPlanId : markPlanId,
-				personIds : personIds
-			},
-			callback : function(options, success, response) {
-				if (success) {
-					personStore.getProxy().extraParams = {
-					    markPlanId : markPlanId
-					}
-					personStore.load();
-					samplingPopulationWin.hide();
-     				personListWin.show();
-				} else {
-					Ext.Msg.alert("提示", "系统繁忙");
-				}
-			}
-		});
-	}
-	
-	//--------------------选择具体打分对象---------------------
 	 var personListWin = Ext.create("Ext.window.Window",{
 		id : 'personListWin',
 		title : '人员列表',

@@ -1,9 +1,13 @@
 package com.sxkl.markplan.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +17,8 @@ import com.sxkl.common.utils.IDUtils;
 import com.sxkl.markplan.dao.MarkPlanDao;
 import com.sxkl.markplan.model.MarkPlan;
 import com.sxkl.markplan.service.MarkPlanService;
+import com.sxkl.person.dao.PersonDao;
+import com.sxkl.person.model.Person;
 import com.sxkl.score.dao.ScoreDao;
 import com.sxkl.score.model.Score;
 
@@ -26,13 +32,23 @@ public class MarkPlanServiceImpl implements MarkPlanService{
 	@Autowired
 	@Qualifier("scoreDaoImpl")
 	private ScoreDao scoreDaoImpl;
+	
+	@Autowired
+	@Qualifier("personDaoImpl")
+	private PersonDao personDaoImpl;
 
 	public String getListPage(int start, int limit) {
 		JSONObject json = new JSONObject();
 		try {
 			List<MarkPlan> markPlans = markPlanDaoImpl.getListPage(start,limit);
+//			List<MarkPlan> datas = new ArrayList<MarkPlan>();
+//			for(MarkPlan markPlan : markPlans){
+//				markPlan.setPersonNum(personNum)
+//			}
 			int markPlansNum = markPlanDaoImpl.getListPageNum();
-			JSONArray data = JSONArray.fromObject(markPlans);
+			JsonConfig config = new JsonConfig();
+			config.setExcludes(new String[]{"persons"});
+			JSONArray data = JSONArray.fromObject(markPlans,config);
 			json.put("data", data);
 			json.put("total", markPlansNum);
 			json.put("start", start);
@@ -96,6 +112,43 @@ public class MarkPlanServiceImpl implements MarkPlanService{
 		List<Score> scores = scoreDaoImpl.checkMarkByMarkPlanId(markPlanId);
 		if(scores != null && scores.size() > 0){
 			return "1";
+		}
+		return "0";
+	}
+
+	public String setMarkPlanPerson(String markPlanId, String[] personIds) {
+		try {
+			List<Person> persons = this.personDaoImpl.getPersonByIds(personIds);
+			MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+			Set<Person> set = new HashSet<Person>(persons);
+			markPlan.setPersons(set);
+			this.markPlanDaoImpl.updateMarkPlan(markPlan);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String selectedPersonList(String markPlanId) {
+		JSONObject json = new JSONObject();
+		try {
+			MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+			List<Person> persons = new ArrayList<Person>(markPlan.getPersons());
+			JsonConfig config = new JsonConfig();
+			config.setExcludes(new String[]{"markPlans"});
+			JSONArray data = JSONArray.fromObject(persons,config);
+			json.put("data", data);
+			json.put("total", persons.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return json.toString();
+	}
+
+	public String checkSamplingPopulation(String markPlanId) {
+		MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+		if(markPlan.getPersons().size() > 0){
+		    return "1";
 		}
 		return "0";
 	}

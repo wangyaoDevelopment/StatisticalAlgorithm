@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,9 @@ public class PersonServiceImpl implements PersonService{
 		try {
 			List<Person> persons = personDaoImpl.getListPage(start,limit);
 			int personsNum = personDaoImpl.getListPageNum();
-			JSONArray data = JSONArray.fromObject(persons);
+			JsonConfig config = new JsonConfig();
+			config.setExcludes(new String[]{"markPlans"});
+			JSONArray data = JSONArray.fromObject(persons,config);
 			json.put("data", data);
 			json.put("total", personsNum);
 			json.put("start", start);

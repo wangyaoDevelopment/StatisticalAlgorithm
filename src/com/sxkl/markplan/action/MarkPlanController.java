@@ -19,7 +19,7 @@ public class MarkPlanController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/list.do",method=RequestMethod.GET,produces="application/json;charset=utf-8")
-	public String getWorkMainPage(int start, int limit) {
+	public String getMarkPlanPage(int start, int limit) {
 		String result = this.markPlanServiceImpl.getListPage(start,limit);
 		return result;
 	}
@@ -54,4 +54,22 @@ public class MarkPlanController {
 		return this.markPlanServiceImpl.checkMarkPlanForSetWeight(markPlanId);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="/setMarkPlanPerson.do",method=RequestMethod.POST,produces="application/json;charset=utf-8")
+	public String setMarkPlanPerson(String markPlanId,String[] personIds) {
+		return this.markPlanServiceImpl.setMarkPlanPerson(markPlanId,personIds);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/selectedPersonList.do",method=RequestMethod.GET,produces="application/json;charset=utf-8")
+	public String selectedPersonList(String markPlanId) {
+		String result = this.markPlanServiceImpl.selectedPersonList(markPlanId);
+		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/checkSamplingPopulation.do",method=RequestMethod.POST,produces="application/json;charset=utf-8")
+	public String checkSamplingPopulation(String markPlanId) {
+		return this.markPlanServiceImpl.checkSamplingPopulation(markPlanId);
+	}
 }

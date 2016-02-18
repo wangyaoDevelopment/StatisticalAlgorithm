@@ -18,4 +18,6 @@ public interface PersonDao {
 
 	public void deletePerson(Person person);
 
+	public List<Person> getPersonByIds(String[] personIds);
+
 }

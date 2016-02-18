@@ -1,5 +1,6 @@
 package com.sxkl.person.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.sxkl.common.utils.PageNoUtil;
 import com.sxkl.person.dao.PersonDao;
 import com.sxkl.person.model.Person;
+import com.sxkl.target.model.Target;
 
 @Repository("personDaoImpl")
 public class PersonDaoImpl extends HibernateDaoSupport implements PersonDao{
@@ -75,6 +77,23 @@ public class PersonDaoImpl extends HibernateDaoSupport implements PersonDao{
 
 	public void deletePerson(Person person) {
 		this.getHibernateTemplate().delete(person);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Person> getPersonByIds(final String[] personIds) {
+		final String hql = "from Person t where t.id in (:ids)";
+		List<Person> persons = (List<Person>) this.getHibernateTemplate().execute(new HibernateCallback(){
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query query = session.createQuery(hql);
+				query.setParameterList("ids", personIds);
+				List<Person> list = query.list();
+				if(list == null || list.size() == 0){
+					return new ArrayList<Target>();
+				}
+				return list;
+			}
+		});
+		return persons;
 	}
 
 }

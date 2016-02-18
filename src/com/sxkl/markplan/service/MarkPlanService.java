@@ -14,4 +14,10 @@ public interface MarkPlanService {
 
 	public String checkMarkPlanForSetWeight(String markPlanId);
 
+	public String setMarkPlanPerson(String markPlanId, String[] personIds);
+
+	public String selectedPersonList(String markPlanId);
+
+	public String checkSamplingPopulation(String markPlanId);
+
 }

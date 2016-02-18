@@ -1,11 +1,19 @@
 package com.sxkl.person.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.sxkl.markplan.model.MarkPlan;
 
 @Entity
 @Table(name="t_person")
@@ -17,6 +25,8 @@ public class Person {
 	private String id;
 	@Column(name="p_name", nullable=true, length=10)
 	private String name;
+	@ManyToMany(mappedBy="persons",fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	private Set<MarkPlan> markPlans = new HashSet<MarkPlan>();
 	
 	public Person() {
 	}
@@ -34,5 +44,11 @@ public class Person {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public Set<MarkPlan> getMarkPlans() {
+		return markPlans;
+	}
+	public void setMarkPlans(Set<MarkPlan> markPlans) {
+		this.markPlans = markPlans;
 	}
 }
