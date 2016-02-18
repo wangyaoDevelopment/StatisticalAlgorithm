@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TopScore;
 
 public interface TargetDao {
 
@@ -38,5 +39,9 @@ public interface TargetDao {
 	public int getRootTargetListPageNum();
 
 	public List<Target> getTargetsByIds(String[] targetIds);
+
+	public List<TopScore> getTopScoreByMarkPlanIdAndPersonId(String markPlanId,String personId);
+
+	public void addTopScore(TopScore topScore);
 
 }

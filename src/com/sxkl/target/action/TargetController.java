@@ -93,4 +93,10 @@ public class TargetController {
 		return targetServiceImpl.getRootTargetList(start,limit);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="/checkTopScore.do",method=RequestMethod.POST)
+	public void checkTopScore(String markPlanId,String personId){
+		targetServiceImpl.checkTopScore(markPlanId,personId);
+	}
+	
 }

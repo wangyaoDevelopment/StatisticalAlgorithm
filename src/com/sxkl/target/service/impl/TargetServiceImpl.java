@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 import com.sxkl.common.utils.IDUtils;
 import com.sxkl.markplan.dao.MarkPlanDao;
 import com.sxkl.markplan.model.MarkPlan;
+import com.sxkl.person.dao.PersonDao;
+import com.sxkl.person.model.Person;
 import com.sxkl.score.dao.ScoreDao;
 import com.sxkl.score.model.Score;
 import com.sxkl.target.dao.TargetDao;
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TopScore;
 import com.sxkl.target.service.TargetService;
 
 @Service("targetServiceImpl")
@@ -35,6 +38,10 @@ public class TargetServiceImpl implements TargetService{
 	@Autowired
 	@Qualifier("markPlanDaoImpl")
 	private MarkPlanDao markPlanDaoImpl;
+	
+	@Autowired
+	@Qualifier("personDaoImpl")
+	private PersonDao personDaoImpl;
 	
 	public List<Target> listAllTarget() {
 		List<Target> targets = targetDaoImpl.getAllTarget();
@@ -180,25 +187,58 @@ public class TargetServiceImpl implements TargetService{
 		}
 		return node;
 	}
+	
+	public Target recursiveSetTopScore(String targetId, double score,MarkPlan markPlan, Person person, List<TopScore> topScores){
+		Target node = targetDaoImpl.getTargetById(targetId);
+		List<Target> childNodes = targetDaoImpl.getChildTargetById(targetId); 
+		for(Target child : childNodes){
+			Target target = recursiveSetTopScore(child.getId(),score,markPlan,person,topScores);
+			boolean flag = false;
+			for(TopScore topScore : topScores){
+				if(topScore.getTarget().getId().equals(target.getId())){
+					flag = true;
+					topScore.setTopScore(score);
+				}
+			}
+			if(!flag){
+				TopScore topScore = new TopScore();
+				topScore.setId(IDUtils.getUUID());
+				topScore.setMarkPlan(markPlan);
+				topScore.setPerson(person);
+				topScore.setTarget(target);
+				topScore.setTopScore(score);
+				this.targetDaoImpl.addTopScore(topScore);
+			}
+//			target.setTopScore(mark*target.getWeight());
+			node.getChildren().add(target);
+		}
+		return node;
+	}
 
 	public Target getScoreTargetTree(String markPlanId, String personId) {
 		Target target = targetDaoImpl.getTargetTreeByRootNode();
 //		List<Score> scores = scoreDaoImpl.getScoreByPersonId(personId);
 		List<Score> scores = scoreDaoImpl.getScoreByPersonAndMarkPlan(personId, markPlanId);
 		List<TargetData> targetDatas = this.targetDaoImpl.getTargetDatasByMarkPlanId(markPlanId);
-		recursiveSetScore(target.getId(),scores,targetDatas);
+		List<TopScore> topScores = this.targetDaoImpl.getTopScoreByMarkPlanIdAndPersonId(markPlanId,personId);
+		recursiveSetScore(target.getId(),scores,targetDatas,topScores);
 		return target;
 	}
 	
-	private Target recursiveSetScore(String id,List<Score> scores, List<TargetData> targetDatas) {
+	private Target recursiveSetScore(String id,List<Score> scores, List<TargetData> targetDatas, List<TopScore> topScores) {
 		Target node = targetDaoImpl.getTargetById(id);
 		List<Target> childNodes = targetDaoImpl.getChildTargetById(id); 
 		for(Target child : childNodes){
-			Target target = recursiveSetScore(child.getId(),scores,targetDatas);
+			Target target = recursiveSetScore(child.getId(),scores,targetDatas,topScores);
 			for(TargetData targetData : targetDatas){
 				if(targetData.getTarget().getId().equals(target.getId())){
 					target.setWeight(targetData.getWeight());
-					target.setTopScore(targetData.getTopScore());
+					//target.setTopScore(targetData.getTopScore());
+				}
+			}
+			for(TopScore topScore : topScores){
+				if(topScore.getTarget().getId().equals(target.getId())){
+					target.setTopScore(topScore.getTopScore());
 				}
 			}
 			for(Score score : scores){
@@ -314,6 +354,17 @@ public class TargetServiceImpl implements TargetService{
 			e.printStackTrace();
 		}
 		return json.toString();
+	}
+
+	public void checkTopScore(String markPlanId, String personId) {
+		Target target = this.targetDaoImpl.getRootTarget();
+		MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+		Person person = this.personDaoImpl.getPersonById(personId);
+		List<TopScore> topScores = this.targetDaoImpl.getTopScoreByMarkPlanIdAndPersonId(markPlanId, personId);
+		if(topScores.size() > 0){
+			return;
+		}
+		this.recursiveSetTopScore(target.getId(),markPlan.getMark(),markPlan,person,topScores);
 	}
 
 }

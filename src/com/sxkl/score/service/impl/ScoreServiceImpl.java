@@ -29,6 +29,7 @@ import com.sxkl.score.service.ScoreService;
 import com.sxkl.target.dao.TargetDao;
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TopScore;
 import com.sxkl.target.service.TargetService;
 
 @Service("scoreServiceImpl")
@@ -258,16 +259,19 @@ public class ScoreServiceImpl implements ScoreService{
 		try {
 			Target target = this.targetDaoImpl.getTargetById(targetId);
 			List<Score> scores = this.scoreDaoImpl.getScoreByPersonAndMarkPlan(personId, markPlanId);
-			List<TargetData> targetDatas = this.targetDaoImpl.getTargetDatasByMarkPlanId(markPlanId);
-			targetServiceImpl.recursiveSetTopScore(target.getId(),score,scores,targetDatas);
-			
+			//List<TargetData> targetDatas = this.targetDaoImpl.getTargetDatasByMarkPlanId(markPlanId);
+			//targetServiceImpl.recursiveSetTopScore(target.getId(),score,scores,targetDatas);
+			MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+			Person person = this.personDaoImpl.getPersonById(personId);
+			List<TopScore> topScores = this.targetDaoImpl.getTopScoreByMarkPlanIdAndPersonId(markPlanId, personId);
+			targetServiceImpl.recursiveSetTopScore(target.getId(),score,markPlan,person,topScores);
 			Score temp = this.scoreDaoImpl.getScoreByParam(markPlanId,personId,targetId);
 			if(temp != null){
 				temp.setScore(score);
 				this.scoreDaoImpl.updateScore(temp);
 			}else{
-				MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
-				Person person = this.personDaoImpl.getPersonById(personId);
+				//MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+				//Person person = this.personDaoImpl.getPersonById(personId);
 				Score scoreBean = new Score(IDUtils.getUUID(),score,target,person,markPlan);
 				this.scoreDaoImpl.addScore(scoreBean);
 			}

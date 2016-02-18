@@ -16,6 +16,7 @@ import com.sxkl.common.utils.PageNoUtil;
 import com.sxkl.target.dao.TargetDao;
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TopScore;
 
 @Repository("targetDaoImpl")
 public class TargetDaoImpl extends HibernateDaoSupport implements TargetDao{
@@ -161,6 +162,20 @@ public class TargetDaoImpl extends HibernateDaoSupport implements TargetDao{
 			}
 		});
 		return targets;
+	}
+
+	public List<TopScore> getTopScoreByMarkPlanIdAndPersonId(String markPlanId,String personId) {
+		String hql = "from TopScore ts where ts.markPlan.id=? and ts.person.id=?";
+		String[] params = new String[]{markPlanId,personId};
+		List<TopScore> datas = (List<TopScore>) this.getHibernateTemplate().find(hql, params);
+		if(datas == null){
+			return new ArrayList<TopScore>();
+		}
+		return datas;
+	}
+
+	public void addTopScore(TopScore topScore) {
+		this.getHibernateTemplate().save(topScore);
 	}
 
 }

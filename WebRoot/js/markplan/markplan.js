@@ -417,7 +417,7 @@ Ext.onReady(function(){
     }); 
     
 	var personGrid = Ext.create("Ext.grid.Panel", {
-		id : 'personGrid',
+		//id : 'personGrid',
 	    xtype: "grid",
 	    store: personStore,
 	    width: 490,
@@ -436,7 +436,8 @@ Ext.onReady(function(){
 					Ext.Msg.alert("提示", "请选择要操作的行！");
 					return false;
 				}
-				openTargetTreeWin().show();
+				checkTopScore();
+				//openTargetTreeWin().show();
             }  
         }],  
         //分页功能   
@@ -451,7 +452,8 @@ Ext.onReady(function(){
 	    ],
 	    listeners: {
 	        itemdblclick: function (me, record, item, index, e, eOpts) {
-	            openTargetTreeWin().show();
+	        	checkTopScore();
+	            //openTargetTreeWin().show();
 	        }
 	    }
 	});
@@ -467,6 +469,26 @@ Ext.onReady(function(){
 		modal : true, // 是否为模态窗口
 		items : personGrid
 	});
+	
+	function checkTopScore(){
+		var markPlanRows = grid.getSelectionModel().getSelection();
+		var personRows = personGrid.getSelectionModel().getSelection();
+		Ext.Ajax.request({
+				method : "post",
+				url : projectName+'target/checkTopScore.do',
+				params : {
+					markPlanId : markPlanRows[0].data.id,
+					personId : personRows[0].data.id
+				},
+				callback : function(options, success, response) {
+					if (success) {
+						openTargetTreeWin().show();
+					} else {
+						Ext.Msg.alert("提示", "系统繁忙");
+					}
+				}
+			});
+	}
 	
 	//打分界面
 	function openTargetTreeWin(){
@@ -619,10 +641,17 @@ Ext.onReady(function(){
 		
 		function setScore(){
 			//Ext.MessageBox.alert('markPlan',node.data.id+"##"+markPlanRows[0].data.id+'##'+personRows[0].data.id);
+			
 			if(setScoreForm.isValid()){
+				var targetRows = targetTreeGrid.getView().getSelectionModel().getSelection();
+				var score = setScoreForm.form.findField('score').getValue();
+				var topScore = targetRows[0].data.topScore;
+				if(score > topScore){
+				    Ext.MessageBox.alert('提示','当前得分不能大于最大分值,请重新打分');
+				    return false;
+				}
 			    var markPlanRows = grid.getSelectionModel().getSelection();
 				var personRows = personGrid.getSelectionModel().getSelection();
-				var targetRows = targetTreeGrid.getView().getSelectionModel().getSelection();
 				Ext.Ajax.request({
 					method : "post",
 					url : projectName+'score/addScore.do',
@@ -630,7 +659,7 @@ Ext.onReady(function(){
 						markPlanId : markPlanRows[0].data.id,
 						personId : personRows[0].data.id,
 						targetId : targetRows[0].data.id,
-						score : setScoreForm.form.findField('score').getValue()
+						score : score
 					},
 					callback : function(options, success, response) {
 						if (success) {

@@ -2,9 +2,12 @@ package com.sxkl.target.service;
 
 import java.util.List;
 
+import com.sxkl.markplan.model.MarkPlan;
+import com.sxkl.person.model.Person;
 import com.sxkl.score.model.Score;
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TopScore;
 
 public interface TargetService {
 
@@ -34,5 +37,9 @@ public interface TargetService {
 	public String checkMarkPlanWeight(String markPlanId);
 
 	public String getRootTargetList(int start, int limit);
+
+	public Target recursiveSetTopScore(String id, double score,MarkPlan markPlan, Person person, List<TopScore> topScores);
+
+	public void checkTopScore(String markPlanId, String personId);
 
 }
