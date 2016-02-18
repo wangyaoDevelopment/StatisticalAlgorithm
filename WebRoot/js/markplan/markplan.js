@@ -1260,8 +1260,9 @@ Ext.onReady(function(){
 
 					}, { // 表单中的数字控件
 						fieldLabel : '权重',
-						//regex : /^\d+$/,
-						//regexText : '格式错误',
+						allowBlank:false,
+	                    blankText:"不能为空！",
+						regex : /^[0-9]+([.]{1}[0-9]+){0,1}$/,
 						name : 'weight',
 						//xtype : 'numbercolumn',
 						editor: {
