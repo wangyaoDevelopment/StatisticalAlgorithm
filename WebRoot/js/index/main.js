@@ -8,6 +8,10 @@ Ext.onReady(function(){
 	        expanded: true,
 	        leaf: false,
 	        children: [{ 
+	        	          id: 'personManagement',
+	                      text: "人员管理", 
+	                      leaf: true 
+	                 },{ 
 	        	          id: 'targetManagement',
 	                      text: "指标管理", 
 	                      leaf: true 
@@ -29,7 +33,9 @@ Ext.onReady(function(){
             //点击行触发事件
             itemclick: function (record,node) {
             	var tabUrl;
-            	if(node.data.id=='targetManagement'){
+            	if(node.data.id=='personManagement'){
+            	   tabUrl = 'page/person_list.jsp';
+            	}else if(node.data.id=='targetManagement'){
             	   tabUrl = 'page/target_list.jsp';
             	}else if(node.data.id=='markManagement'){
             	   tabUrl = 'page/markplan.jsp';

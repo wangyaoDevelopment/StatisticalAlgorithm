@@ -73,4 +73,8 @@ public class PersonDaoImpl extends HibernateDaoSupport implements PersonDao{
 		return null;
 	}
 
+	public void deletePerson(Person person) {
+		this.getHibernateTemplate().delete(person);
+	}
+
 }

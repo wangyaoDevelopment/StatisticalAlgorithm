@@ -16,4 +16,6 @@ public interface PersonDao {
 
 	public Person getPersonById(String personId);
 
+	public void deletePerson(Person person);
+
 }

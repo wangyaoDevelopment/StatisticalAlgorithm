@@ -141,74 +141,74 @@ Ext.onReady(function() {
 	});
 
 	// 弹出window的form表单
-	var AddForm = Ext.create("Ext.form.Panel", {
-				border : false,
-				fieldDefaults : {
-					msgTarget : 'side', // 提示信息在右旁边显示图标
-					labelWidth : 105,
-					align : "right",
-					regexText : '格式错误', // 错误提示
-					allowBlank : false
-				},
-				defaults : {
-					padding : 15,
-					width : 380
-				},
-				defaultType : "textfield",
-				items : [{
-							xtype : "hidden",
-							name : 'pId'
-						}, {
-							fieldLabel : '父指标名称',
-							id : "pName",
-							name : 'pName',
-							disabled : true
-						}, {
-							fieldLabel : '兄弟指标名称',
-							id : "bName",
-							name : 'bName',
-							disabled : true
-						}, {
-							fieldLabel : '指标名称',
-							name : 'text'
+var AddForm = Ext.create("Ext.form.Panel", {
+		border : false,
+		fieldDefaults : {
+			msgTarget : 'side', // 提示信息在右旁边显示图标
+			labelWidth : 105,
+			align : "right",
+			regexText : '格式错误', // 错误提示
+			allowBlank : false
+		},
+		defaults : {
+			padding : 15,
+			width : 380
+		},
+		defaultType : "textfield",
+		items : [{
+					xtype : "hidden",
+					name : 'pId'
+				}, {
+					fieldLabel : '父指标名称',
+					id : "pName",
+					name : 'pName',
+					disabled : true
+				}, {
+					fieldLabel : '兄弟指标名称',
+					id : "bName",
+					name : 'bName',
+					disabled : true
+				}, {
+					fieldLabel : '指标名称',
+					name : 'text'
 
-						}]
-			});
+				}]
+	});
 
 	// 要弹出的window
 	var AddDialog = Ext.create("Ext.window.Window", {
-				closeAction : 'hide', // 窗口关闭的方式：hide/close
-				resizable : false,
-				closable : true, // 是否可以关闭
-				modal : true, // 是否为模态窗口
-				items : AddForm,
-				buttons : [{
-							text : '添加',
-							id : "btnAdd",
-							handler : function() {
-								if (AddForm.form.isValid()) {
-									if (AddDialog.title == '添加兄弟指标') {
-										// O为兄弟指标，1为子指标 2为自己指标
-										AddTarget(0);
-									} else if (AddDialog.title == '添加子指标'){
-										AddTarget(1);
-									} else{
-									    AddTarget(2);
-									}
-								}
+		closeAction : 'hide', // 窗口关闭的方式：hide/close
+		resizable : false,
+		closable : true, // 是否可以关闭
+		modal : true, // 是否为模态窗口
+		items : AddForm,
+		buttons : [{
+					text : '添加',
+					id : "btnAdd",
+					handler : function() {
+						if (AddForm.form.isValid()) {
+							if (AddDialog.title == '添加兄弟指标') {
+								// O为兄弟指标，1为子指标 2为自己指标
+								AddTarget(0);
+							} else if (AddDialog.title == '添加子指标'){
+								AddTarget(1);
+							} else{
+							    AddTarget(2);
 							}
-						}, {
-							text : '修改',
-							id : "btnEdit",
-							handler : EditTarget
-						}, {
-							id : "btnCancel",
-							text : '重置',
-							handler : function() {
-								AddForm.form.reset();
-							}
-						}]
-			});
+						}
+					}
+				}, {
+					text : '修改',
+					id : "btnEdit",
+					handler : EditTarget
+				}, {
+					id : "btnCancel",
+					text : '重置',
+					handler : function() {
+						AddForm.form.reset();
+					}
+				}]
+	});
 	var viewPort = Ext.create('Ext.Viewport',{
 				layout : "border",
 				renderTo : 'treeGrid',

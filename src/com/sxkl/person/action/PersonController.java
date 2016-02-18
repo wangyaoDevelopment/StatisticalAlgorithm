@@ -38,31 +38,44 @@ public class PersonController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/list.do")
-	public List<Person> getPersonList(){
-		List<Person> personList = null;
+	@RequestMapping(value="/add.do",method=RequestMethod.POST,produces="application/json;charset=utf-8")
+	public String addPerson(String name){
 		try{
-			personList = personServiceImpl.listAllPerson();
+			personServiceImpl.addPerson(name);
 		} catch(Exception e){
 			logger.error(e.toString(), e);
+			return "添加人员失败";
 		}
-		return personList;
+		return "添加人员成功";
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/addPerson.do")
-	public String addPerson(Person person){
+	@RequestMapping(value="/edit.do",method=RequestMethod.POST,produces="application/json;charset=utf-8")
+	public String editPerson(String id,String name){
 		try{
-			personServiceImpl.addPerson(person);
+			personServiceImpl.editPerson(id,name);
 		} catch(Exception e){
 			logger.error(e.toString(), e);
+			return "修改人员失败";
 		}
-		return "";
+		return "修改人员成功";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delete.do",method=RequestMethod.POST,produces="application/json;charset=utf-8")
+	public String deletePerson(String id){
+		try{
+			personServiceImpl.deletePerson(id);
+		} catch(Exception e){
+			logger.error(e.toString(), e);
+			return "删除人员失败";
+		}
+		return "删除人员成功";
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/list.do",method=RequestMethod.GET,produces="application/json;charset=utf-8")
-	public String getWorkMainPage(int start, int limit) {
+	public String getPersonList(int start, int limit) {
 		String result = this.personServiceImpl.getListPage(start,limit);
 		return result;
 	}

@@ -8,8 +8,12 @@ public interface PersonService {
 
 	public List<Person> listAllPerson();
 
-	public void addPerson(Person person);
+	public void addPerson(String name);
 
 	public String getListPage(int start, int limit);
+
+	public void editPerson(String id, String name);
+
+	public void deletePerson(String id);
 
 }
