@@ -100,5 +100,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/stax2-api-3.1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/woodstox-core-asl-4.1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xssProtect-0.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hibernate3.6.0dialect.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/kingbasejdbc4.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
