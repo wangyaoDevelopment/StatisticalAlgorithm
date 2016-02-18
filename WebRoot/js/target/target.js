@@ -20,9 +20,23 @@ Ext.onReady(function() {
 	// 获取tbar
 	var tbar = Ext.create("Ext.toolbar.Toolbar", {
 		items : [{
-			text : '添加兄弟分类',
+		    text : '添加指标',
+		    handler : function(){
+		        AddDialog.setTitle("添加指标");
+				AddForm.form.reset();
+				Ext.getCmp("btnAdd").show();
+				Ext.getCmp("btnEdit").hide();
+				Ext.getCmp("pName").hide();
+				Ext.getCmp("bName").hide();
+				if (typeof(TargetTreeGrid) == "undefined") {
+					return false;
+				}
+				AddDialog.show();
+		    }
+		},{
+			text : '添加兄弟指标',
 			handler : function() {
-				AddDialog.setTitle("添加兄弟分类");
+				AddDialog.setTitle("添加兄弟指标");
 				AddForm.form.reset();
 				Ext.getCmp("btnAdd").show();
 				Ext.getCmp("btnEdit").hide();
@@ -40,9 +54,9 @@ Ext.onReady(function() {
 				AddDialog.show();
 			}
 		}, '-', {
-			text : '添加子分类',
+			text : '添加子指标',
 			handler : function() {
-				AddDialog.setTitle("添加子分类");
+				AddDialog.setTitle("添加子指标");
 				AddForm.form.reset();
 				Ext.getCmp("btnAdd").show();
 				Ext.getCmp("btnEdit").hide();
@@ -65,7 +79,7 @@ Ext.onReady(function() {
 		}, '-', {
 			text : '修改',
 			handler : function() {
-				AddDialog.setTitle("修改分类");
+				AddDialog.setTitle("修改指标");
 				AddForm.form.reset();
 				Ext.getCmp("btnEdit").show();
 				Ext.getCmp("btnAdd").hide();
@@ -114,7 +128,7 @@ Ext.onReady(function() {
 		autoScroll : true,
 		columns : [{ 
 			xtype : 'treecolumn',
-			text : '分类名称', 
+			text : '指标名称', 
 			flex : 2,
 			sortable : true,
 			dataIndex : 'text' 
@@ -145,17 +159,17 @@ Ext.onReady(function() {
 							xtype : "hidden",
 							name : 'pId'
 						}, {
-							fieldLabel : '父分类名称',
+							fieldLabel : '父指标名称',
 							id : "pName",
 							name : 'pName',
 							disabled : true
 						}, {
-							fieldLabel : '兄弟分类名称',
+							fieldLabel : '兄弟指标名称',
 							id : "bName",
 							name : 'bName',
 							disabled : true
 						}, {
-							fieldLabel : '分类名称',
+							fieldLabel : '指标名称',
 							name : 'text'
 
 						}]
@@ -173,11 +187,13 @@ Ext.onReady(function() {
 							id : "btnAdd",
 							handler : function() {
 								if (AddForm.form.isValid()) {
-									if (AddDialog.title == '添加兄弟分类') {
-										// O为兄弟分类，1为子分类
+									if (AddDialog.title == '添加兄弟指标') {
+										// O为兄弟指标，1为子指标 2为自己指标
 										AddTarget(0);
-									} else {
+									} else if (AddDialog.title == '添加子指标'){
 										AddTarget(1);
+									} else{
+									    AddTarget(2);
 									}
 								}
 							}
@@ -209,11 +225,14 @@ Ext.onReady(function() {
 				]
 			});
 
-	// 添加分类
+	// 添加指标
 	function AddTarget(type) {
-		var rows = TargetTreeGrid.getView().getSelectionModel().getSelection();
-		var id = rows[0].data.id;
-		// 0  兄弟分类   1 子分类
+		var id = 'null';
+		if(type != '2'){
+			var rows = TargetTreeGrid.getView().getSelectionModel().getSelection();
+			id = rows[0].data.id;
+		}
+		// 0  兄弟指标   1 子指标 2为自己指标
 		Ext.Ajax.request({
 					method : "post",
 					url : projectName+'target/add.do',
@@ -235,7 +254,7 @@ Ext.onReady(function() {
 					}
 				});
 	}
-	// 删除分类
+	// 删除指标
 	function DelTarget() {
 		var rows = TargetTreeGrid.getView().getSelectionModel().getSelection();
 		if (typeof(rows[0]) == "undefined") {
@@ -260,7 +279,7 @@ Ext.onReady(function() {
 					}
 				});
 	}
-	// 修改分类
+	// 修改指标
 	function EditTarget() {
 		var rows = TargetTreeGrid.getView().getSelectionModel().getSelection();
 		if (typeof(rows[0]) == "undefined") {

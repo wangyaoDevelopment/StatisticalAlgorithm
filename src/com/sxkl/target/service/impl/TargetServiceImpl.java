@@ -122,6 +122,14 @@ public class TargetServiceImpl implements TargetService{
 				this.addBrotherTarget(target,id);
 			}else if(type.equals("1")){
 				this.addChildrenTarget(target, id);
+			}else if(type.equals("2")){
+				Target parent = this.targetDaoImpl.getRootTarget();
+				target.setId(IDUtils.getUUID());
+				target.setParent(parent);
+				target.setLevel(1);
+				target.setRoot(null);
+				parent.getChildren().add(target);
+				targetDaoImpl.updateTarget(parent);
 			}
 		} catch (Exception e) {
 			return "添加结点失败";
@@ -135,7 +143,7 @@ public class TargetServiceImpl implements TargetService{
 		target.setId(IDUtils.getUUID());
 		target.setParent(parent);
 		target.setLevel(brother.getLevel());
-		target.setRoot(parent.getRoot());
+		//target.setRoot(parent.getRoot());
 		if(brother.getRoot() == null){
 			target.setRoot(null);
 		}else{
