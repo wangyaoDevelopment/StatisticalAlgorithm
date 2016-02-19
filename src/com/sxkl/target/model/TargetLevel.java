@@ -2,8 +2,8 @@ package com.sxkl.target.model;
 
 public class TargetLevel {
 	
-	private String id;
-	private String name;
+	private String id;//指标层级ID
+	private String name;//指标层级名称
 	
 	public String getId() {
 		return id;

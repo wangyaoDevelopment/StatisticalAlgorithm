@@ -33,7 +33,6 @@ public class TargetDaoImpl extends HibernateDaoSupport implements TargetDao{
 
 	public Target getTargetTreeByRootNode() {
 		String hql = "from Target t where t.parent.id is null";
-//		String[] param = new String[]{"0"};
 		List<Target> data = (List<Target>) this.getHibernateTemplate().find(hql);
 		if(data != null && data.size() > 0){
 			return data.get(0);

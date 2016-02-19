@@ -21,18 +21,18 @@ public class TopScore {
 	@Id
 	@GenericGenerator(name = "paymentableGenerator", strategy = "uuid") 
 	@Column(name="t_s_id", nullable=false, length=32)
-	private String id;
+	private String id;//直达分值主键
 	@Column(name="t_s_top_score")
-	private Double topScore;
+	private Double topScore;//最大分值
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_s_person_id",nullable=true)
-	private Person person;
+	private Person person;//人员
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_s_target_id",nullable=true)
-	private Target target;
+	private Target target;//指标
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_s_mark_plan_id",nullable=true)
-	private MarkPlan markPlan;
+	private MarkPlan markPlan;//打分计划
 	
 	public String getId() {
 		return id;

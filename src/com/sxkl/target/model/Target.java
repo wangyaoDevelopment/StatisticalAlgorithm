@@ -25,22 +25,22 @@ public class Target implements  Comparable<Target>{
 	@Id
 	@GenericGenerator(name = "paymentableGenerator", strategy = "uuid") 
 	@Column(name="t_id", nullable=true, length=32)
-	private String id;
+	private String id;//指标主键
 	@Column(name="t_text", nullable=true, length=30)
-	private String text;
+	private String text;//指标名称
 	@Column(name="t_level", nullable=true)
-	private int level;
+	private int level;//指标层级
 	@Transient
-	private double weight;
+	private double weight;//指标权重
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_parent_id",nullable=true)
-	private Target  parent;
+	private Target  parent;//父指标
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_root_id",nullable=true)
-	private Target  root;
+	private Target  root;//根指标
 	@OneToMany(targetEntity=Target.class,cascade=CascadeType.ALL, fetch = FetchType.EAGER)  
 	@JoinColumn(name = "t_parent_id")
-	private Set<Target> children = new TreeSet<Target>();
+	private Set<Target> children = new TreeSet<Target>();//子指标
 	@Transient
 	private double topScore;
 	@Transient

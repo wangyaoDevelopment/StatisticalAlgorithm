@@ -20,17 +20,15 @@ public class TargetData {
 	@Id
 	@GenericGenerator(name = "paymentableGenerator", strategy = "uuid") 
 	@Column(name="t_d_id", nullable=false, length=32)
-	private String id;
+	private String id;//权重数据主键
 	@Column(name="t_d_weight", nullable=true)
-	private double weight;
-	//@Column(name="t_d_top_score", nullable=true)
-	//private double topScore;
+	private double weight;//权重
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_target_id",nullable=true)
-	private Target target;
+	private Target target;//指标
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_mark_plan_id",nullable=true)
-	private MarkPlan markPlan;
+	private MarkPlan markPlan;//打分计划
 	
 	public String getId() {
 		return id;
