@@ -41,48 +41,39 @@ Ext.onReady(function(){
 			}]
 		});
 		
-    var title = 'title';
-    var myChart;
+    //var myChart;
     var option;
     function drawChart(){
         option = {
-	    	    title : {
-	    	        text: '指标归一化分数图'
-	    	    },
-	    	    tooltip : {
-	    	        trigger: 'axis'
-	    	    },
-	    	    legend: {
-	    	        data:[]
-	    	    },
-	    	    toolbox: {
-	    	        show : true,
-	    	        feature : {
-	    	            mark : {show: true},
-	    	            dataView : {show: true, readOnly: false},
-	    	            magicType : {show: true, type: ['line', 'bar']},
-	    	            restore : {show: true},
-	    	            saveAsImage : {show: true}
-	    	        }
-	    	    },
-	    	    calculable : true,
-	    	    xAxis : [],
-	    	    yAxis : [
-	    	        {
-	    	            type : 'value'
-	    	        }
-	    	    ],
-	    	    series : []
-	    	};
-	    // 基于准备好的dom，初始化echarts图表
-        myChart = echarts.init(document.getElementById('main')); 
-        // 为echarts对象加载数据 
-        myChart.setOption(option); 
-        
-        
+    	    title : {
+    	        text: '指标归一化分数图'
+    	    },
+    	    tooltip : {
+    	        trigger: 'axis'
+    	    },
+    	    legend: {
+    	        data:[]
+    	    },
+    	    toolbox: {
+    	        show : true,
+    	        feature : {
+    	            mark : {show: true},
+    	            dataView : {show: true, readOnly: false},
+    	            magicType : {show: true, type: ['line', 'bar']},
+    	            restore : {show: true},
+    	            saveAsImage : {show: true}
+    	        }
+    	    },
+    	    calculable : true,
+    	    xAxis : [],
+    	    yAxis : [
+    	        {
+    	            type : 'value'
+    	        }
+    	    ],
+    	    series : []
+    	};
     }
-    
-    drawChart();
     
     function statisticsChartByLevel(){
          Ext.Ajax.request({
@@ -94,8 +85,8 @@ Ext.onReady(function(){
             },
             callback : function(gd, success, resp) {
                 try {
-                    var rst = Ext.decode(resp.responseText);
-                    var data = rst;
+                	drawChart();
+                    var data = Ext.decode(resp.responseText);
                     var categories = data.categories;
                     var arr = data.series;
                     option.legend.data = [];
@@ -115,12 +106,11 @@ Ext.onReady(function(){
                                 type : 'category',
                                 data : categories
                             });
+                    var myChart = echarts.init(document.getElementById('main')); 
                     myChart.setOption(option);    
-                    //Ext.tools.tips("获取数据失败！");
                 } catch (e) {
-                    Ext.MessageBox.alert('ERROR',e)
+                    Ext.MessageBox.alert('ERROR','无数据')
                 }
-                 
             }
         });
     }
