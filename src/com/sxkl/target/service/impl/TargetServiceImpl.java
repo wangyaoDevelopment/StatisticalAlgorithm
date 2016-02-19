@@ -21,6 +21,7 @@ import com.sxkl.score.model.Score;
 import com.sxkl.target.dao.TargetDao;
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TargetLevel;
 import com.sxkl.target.model.TopScore;
 import com.sxkl.target.service.TargetService;
 
@@ -389,6 +390,22 @@ public class TargetServiceImpl implements TargetService{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return json.toString();
+	}
+
+	public String getTargetLevelComboBox() {
+		List<TargetLevel> levels = new ArrayList<TargetLevel>();
+		int maxLevel = this.targetDaoImpl.getTargetMaxLevel();
+		for(int i = 1; i <= maxLevel; i++){
+			TargetLevel level = new TargetLevel();
+			level.setId(i+"");
+			level.setName(i+"级");
+			levels.add(level);
+		}
+		JSONArray datas = JSONArray.fromObject(levels);
+		JSONObject json = new JSONObject();
+		json.put("datas", datas);
+		json.put("total", levels.size());
 		return json.toString();
 	}
 

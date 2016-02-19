@@ -46,4 +46,6 @@ public interface TargetDao {
 
 	public List<Target> getTargetsPageByIds(String[] targetIds, int start,int limit);
 
+	public int getTargetMaxLevel();
+
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sxkl.target.model.Target;
+import com.sxkl.target.model.TargetLevel;
 import com.sxkl.target.service.TargetService;
 
 @Controller
@@ -104,5 +105,12 @@ public class TargetController {
 	public String getRootTargetListByIds(String[] targetIds,int start, int limit){
 	    return targetServiceImpl.getTargetsPageByIds(targetIds,start,limit);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getTargetLevelComboBox.do",method=RequestMethod.GET,produces="application/json;charset=utf-8")
+	public String getTargetLevelComboBox(){
+	    return targetServiceImpl.getTargetLevelComboBox();
+	}
+	
 	
 }

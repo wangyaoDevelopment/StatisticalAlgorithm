@@ -893,21 +893,32 @@ Ext.onReady(function(){
 	  
 	    }); 
 	    
-	    var levelStore = Ext.create('Ext.data.Store', {
-		    fields: ['id', 'name'],
-		    data : [
-		        {"id":"1", "name":"一级"},
-		        {"id":"2", "name":"二级"},
-		        {"id":"3", "name":"三级"},
-		        {"id":"4", "name":"四级"},
-		        {"id":"5", "name":"五级"},
-		        {"id":"6", "name":"六级"}
-		    ]
+	    Ext.define("MyApp.model.TargetLevel",{
+		     extend: "Ext.data.Model",
+	         fields: [
+		        { name: 'id', type: 'string' },
+		        { name: 'name', type: 'string' }
+	          ]
+		});
+		
+		var levelStore = Ext.create('Ext.data.Store', {
+			model: "MyApp.model.TargetLevel",
+			autoLoad : true,
+            proxy: {
+	            type: 'ajax',
+	            url: projectName+'target/getTargetLevelComboBox.do',
+	            reader: {
+	                type: 'json',
+	                totalProperty: 'total',
+	                root: 'datas'
+	            }
+	        }
 		});
 		
 		var levelComboBox = Ext.create('Ext.form.ComboBox', {
 			name : 'levelComboBox',
 		    store: levelStore,
+		    triggerAction: 'all',
 		    queryMode: 'local',
 		    displayField: 'name',
 		    valueField: 'id'

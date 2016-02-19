@@ -7,6 +7,7 @@ import com.sxkl.person.model.Person;
 import com.sxkl.score.model.Score;
 import com.sxkl.target.model.Target;
 import com.sxkl.target.model.TargetData;
+import com.sxkl.target.model.TargetLevel;
 import com.sxkl.target.model.TopScore;
 
 public interface TargetService {
@@ -43,5 +44,7 @@ public interface TargetService {
 	public void checkTopScore(String markPlanId, String personId);
 
 	public String getTargetsPageByIds(String[] targetIds, int start, int limit);
+
+	public String getTargetLevelComboBox();
 
 }

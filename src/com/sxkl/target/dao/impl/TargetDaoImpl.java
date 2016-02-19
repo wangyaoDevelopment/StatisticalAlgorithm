@@ -196,5 +196,23 @@ public class TargetDaoImpl extends HibernateDaoSupport implements TargetDao{
 		});
 		return targets;
 	}
+
+	@SuppressWarnings("unchecked")
+	public int getTargetMaxLevel() {
+		Integer level = 0;
+		final String hql = "select max(t.level) from Target t";
+		Object num = this.getHibernateTemplate().execute(new HibernateCallback(){
+			public Object doInHibernate(Session session) throws HibernateException {
+				Query query = session.createQuery(hql);
+				List list = query.list();
+				if(list == null || list.size() == 0){
+					return 0;
+				}
+				return list.get(0);
+			}
+		});
+		level = Integer.valueOf(num.toString());
+		return level;
+	}
 	
 }
