@@ -48,4 +48,6 @@ public interface TargetDao {
 
 	public int getTargetMaxLevel();
 
+	public void addTarget(Target target);
+
 }

@@ -117,7 +117,7 @@ public class TargetServiceImpl implements TargetService{
 	}
 
 	public String addTarget(Target target, String id, String type) {
-		// type 0  兄弟分类   1 子分类
+		// type 0  兄弟指标   1 子指标  2自己指标
 		try {
 			if(type.equals("0")){
 				this.addBrotherTarget(target,id);
@@ -125,17 +125,32 @@ public class TargetServiceImpl implements TargetService{
 				this.addChildrenTarget(target, id);
 			}else if(type.equals("2")){
 				Target parent = this.targetDaoImpl.getRootTarget();
-				target.setId(IDUtils.getUUID());
-				target.setParent(parent);
-				target.setLevel(1);
-				target.setRoot(null);
-				parent.getChildren().add(target);
-				targetDaoImpl.updateTarget(parent);
+				if(parent == null){
+					parent = new Target();
+					parent.setId(IDUtils.getUUID());
+					parent.setLevel(0);
+					parent.setParent(null);
+					parent.setRoot(null);
+					parent.setText("指标");
+					setTargetProperty(parent,target);
+					targetDaoImpl.addTarget(parent);
+				}else{
+					setTargetProperty(parent,target);
+					targetDaoImpl.updateTarget(parent);
+				}
 			}
 		} catch (Exception e) {
 			return "添加结点失败";
 		}
 		return "添加结点成功";
+	}
+
+	private void setTargetProperty(Target parent, Target target) {
+		target.setId(IDUtils.getUUID());
+		target.setParent(parent);
+		target.setLevel(1);
+		target.setRoot(null);
+		parent.getChildren().add(target);
 	}
 
 	private void addBrotherTarget(Target target, String id) throws Exception{
@@ -188,7 +203,7 @@ public class TargetServiceImpl implements TargetService{
 			Target target = recursiveSetTopScore(child.getId(),child.getWeight()*mark,scores,targetDatas);
 			for(TargetData targetData : targetDatas){
 				if(targetData.getTarget().getId().equals(target.getId())){
-					targetData.setTopScore(mark);
+					//targetData.setTopScore(mark);
 				}
 			}
 			target.setTopScore(mark*target.getWeight());
@@ -285,7 +300,7 @@ public class TargetServiceImpl implements TargetService{
 			for(TargetData targetData : targetDatas){
 				if(targetData.getTarget().getId().equals(target.getId())){
 					target.setWeight(targetData.getWeight());
-					target.setTopScore(targetData.getTopScore());
+					//target.setTopScore(targetData.getTopScore());
 					flag = true;
 				}
 			}
@@ -298,7 +313,7 @@ public class TargetServiceImpl implements TargetService{
 				data.setId(IDUtils.getUUID());
 				data.setMarkPlan(markPlan);
 				data.setTarget(child);
-				data.setTopScore(mark);
+				//data.setTopScore(mark);
 				data.setWeight(weight);
 				targetDaoImpl.addTargetData(data);
 				target.setWeight(weight);
@@ -320,13 +335,13 @@ public class TargetServiceImpl implements TargetService{
 				targetData.setMarkPlan(mp);
 				targetData.setTarget(target);
 				targetData.setWeight(weight);
-				targetData.setTopScore(mp.getMark());
+				//targetData.setTopScore(mp.getMark());
 				this.targetDaoImpl.addTargetData(targetData);
 			}else{
 				targetData.setMarkPlan(mp);
 				targetData.setTarget(target);
 				targetData.setWeight(weight);
-				targetData.setTopScore(mp.getMark());
+				//targetData.setTopScore(mp.getMark());
 				this.targetDaoImpl.updateTargetData(targetData);
 			}
 		} catch (Exception e) {

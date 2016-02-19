@@ -34,10 +34,16 @@ public class PersonServiceImpl implements PersonService{
 		return persons;
 	}
 
-	public void addPerson(String name) {
-		Person  person = new Person(IDUtils.getUUID());
-		person.setName(name);
-		personDaoImpl.addPerson(person);
+	public String addPerson(String name) {
+		try {
+			Person  person = new Person(IDUtils.getUUID());
+			person.setName(name);
+			personDaoImpl.addPerson(person);
+		} catch (Exception e) {
+			logger.error(e.toString(), e);
+			return "添加人员失败";
+		}
+		return "添加人员成功";
 	}
 
 	public String getListPage(int start, int limit) {
@@ -46,6 +52,7 @@ public class PersonServiceImpl implements PersonService{
 			List<Person> persons = personDaoImpl.getListPage(start,limit);
 			int personsNum = personDaoImpl.getListPageNum();
 			JsonConfig config = new JsonConfig();
+			//人员的markPlans属性不转化为json格式
 			config.setExcludes(new String[]{"markPlans"});
 			JSONArray data = JSONArray.fromObject(persons,config);
 			json.put("data", data);
@@ -58,21 +65,25 @@ public class PersonServiceImpl implements PersonService{
 		return json.toString();
 	}
 
-	public void editPerson(String id, String name) {
+	public String editPerson(String id, String name) {
 		try {
 			Person person = this.personDaoImpl.getPersonById(id);
 			person.setName(name);
 		} catch (Exception e) {
 			logger.error("修改人员失败:{}",e.getLocalizedMessage());
+			return "修改人员失败";
 		}
+		return "修改人员成功";
 	}
 
-	public void deletePerson(String id) {
+	public String deletePerson(String id) {
 		try {
 			Person person = this.personDaoImpl.getPersonById(id);
 			this.personDaoImpl.deletePerson(person);
 		} catch (Exception e) {
 			logger.error("删除人员失败:{}",e.getLocalizedMessage());
+			return "删除人员失败";
 		}
+		return "删除人员成功";
 	}
 }

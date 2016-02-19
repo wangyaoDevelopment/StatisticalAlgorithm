@@ -22,18 +22,18 @@ public class Score {
 	@Id
 	@GenericGenerator(name = "paymentableGenerator", strategy = "uuid") 
 	@Column(name="s_id", nullable=false, length=32)
-	private String id;
+	private String id;//得分主键
 	@Column(name="s_score", nullable=false)
-	private double score = 0;
+	private double score = 0;//得分
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="s_target_id",nullable=true)
-	private Target target;
+	private Target target;//指标
 	@ManyToOne(cascade=CascadeType.ALL,optional=false,fetch=FetchType.LAZY)
 	@JoinColumn(name="s_person_id",nullable=false)
-	private Person person;
+	private Person person;//人员
 	@ManyToOne(cascade=CascadeType.ALL,optional=false,fetch=FetchType.LAZY)
 	@JoinColumn(name="s_mark_plan_id",nullable=false)
-	private MarkPlan markPlan;
+	private MarkPlan markPlan;//打分计划
 	
 	public Score() {
 	}

@@ -41,7 +41,6 @@ Ext.onReady(function(){
 			}]
 		});
 		
-    //var myChart;
     var option;
     function drawChart(){
         option = {

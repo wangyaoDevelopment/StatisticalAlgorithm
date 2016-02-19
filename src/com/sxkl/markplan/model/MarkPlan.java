@@ -25,9 +25,9 @@ public class MarkPlan {
 	@Id
 	@GenericGenerator(name = "paymentableGenerator", strategy = "uuid") 
 	@Column(name="m_p_id", nullable=false, length=32)
-	private String id;
+	private String id;//主键
 	@Column(name="m_p_name", nullable=false, length=100)
-	private String name;
+	private String name;//名称
 	@Column(name="m_mark", nullable=true)
 	private double mark;//分制
 	@ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
@@ -36,9 +36,9 @@ public class MarkPlan {
         joinColumns=@JoinColumn(name="t_mark_plan_id"),
         inverseJoinColumns=@JoinColumn(name="t_person_id")
 	)
-	private Set<Person> persons = new HashSet<Person>();
+	private Set<Person> persons = new HashSet<Person>();//参与人员
 	@Transient
-	private Integer personNum;
+	private Integer personNum;//参与人数
 	
 	public MarkPlan() {
 	}

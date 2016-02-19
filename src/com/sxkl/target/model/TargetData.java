@@ -23,8 +23,8 @@ public class TargetData {
 	private String id;
 	@Column(name="t_d_weight", nullable=true)
 	private double weight;
-	@Column(name="t_d_top_score", nullable=true)
-	private double topScore;
+	//@Column(name="t_d_top_score", nullable=true)
+	//private double topScore;
 	@ManyToOne(cascade=CascadeType.ALL,optional=true,fetch=FetchType.LAZY)
 	@JoinColumn(name="t_target_id",nullable=true)
 	private Target target;
@@ -43,12 +43,6 @@ public class TargetData {
 	}
 	public void setWeight(double weight) {
 		this.weight = weight;
-	}
-	public double getTopScore() {
-		return topScore;
-	}
-	public void setTopScore(double topScore) {
-		this.topScore = topScore;
 	}
 	public Target getTarget() {
 		return target;

@@ -214,5 +214,9 @@ public class TargetDaoImpl extends HibernateDaoSupport implements TargetDao{
 		level = Integer.valueOf(num.toString());
 		return level;
 	}
+
+	public void addTarget(Target target) {
+		this.getHibernateTemplate().save(target);
+	}
 	
 }

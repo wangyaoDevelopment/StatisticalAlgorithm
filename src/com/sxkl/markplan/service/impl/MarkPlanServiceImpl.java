@@ -41,12 +41,9 @@ public class MarkPlanServiceImpl implements MarkPlanService{
 		JSONObject json = new JSONObject();
 		try {
 			List<MarkPlan> markPlans = markPlanDaoImpl.getListPage(start,limit);
-//			List<MarkPlan> datas = new ArrayList<MarkPlan>();
-//			for(MarkPlan markPlan : markPlans){
-//				markPlan.setPersonNum(personNum)
-//			}
 			int markPlansNum = markPlanDaoImpl.getListPageNum();
 			JsonConfig config = new JsonConfig();
+			//打分计划的persons属性不转化为json格式
 			config.setExcludes(new String[]{"persons"});
 			JSONArray data = JSONArray.fromObject(markPlans,config);
 			json.put("data", data);
@@ -100,12 +97,13 @@ public class MarkPlanServiceImpl implements MarkPlanService{
 		if(scores != null && scores.size() > 0){
 			return "1";
 		}
-		MarkPlan mp = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
-		if(mp.getMark() == mark){
-			return "0";
-		}else{
-			return "1";
-		}
+		return "0";
+//		MarkPlan mp = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
+//		if(mp.getMark() == mark){
+//			return "0";
+//		}else{
+//			return "1";
+//		}
 	}
 
 	public String checkMarkPlanForSetWeight(String markPlanId) {
@@ -135,6 +133,7 @@ public class MarkPlanServiceImpl implements MarkPlanService{
 			MarkPlan markPlan = this.markPlanDaoImpl.getMarkPlanById(markPlanId);
 			List<Person> persons = new ArrayList<Person>(markPlan.getPersons());
 			JsonConfig config = new JsonConfig();
+			//人员的markPlans属性不转化为json格式
 			config.setExcludes(new String[]{"markPlans"});
 			JSONArray data = JSONArray.fromObject(persons,config);
 			json.put("data", data);

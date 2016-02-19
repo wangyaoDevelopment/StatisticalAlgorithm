@@ -22,11 +22,11 @@ public class Person {
 	@Id
 	@GenericGenerator(name = "paymentableGenerator", strategy = "uuid") 
 	@Column(name="p_id", nullable=false, length=32)
-	private String id;
+	private String id;//人员主键
 	@Column(name="p_name", nullable=true, length=10)
-	private String name;
+	private String name;//人员姓名
 	@ManyToMany(mappedBy="persons",fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private Set<MarkPlan> markPlans = new HashSet<MarkPlan>();
+	private Set<MarkPlan> markPlans = new HashSet<MarkPlan>();//打分计划
 	
 	public Person() {
 	}

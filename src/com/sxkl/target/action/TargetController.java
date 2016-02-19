@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sxkl.target.model.Target;
-import com.sxkl.target.model.TargetLevel;
 import com.sxkl.target.service.TargetService;
 
 @Controller
