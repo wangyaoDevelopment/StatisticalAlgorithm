@@ -367,8 +367,12 @@ public class ScoreServiceImpl implements ScoreService{
 			seriesJson.put("name", persons.get(i).getName());
 			Double[] seriesData = new Double[rootTargets.size()];
 			for(int j = 0; j < rootTargets.size(); j++){
-				BigDecimal bd = new BigDecimal(datas.get(rootTargets.get(j)).get(persons.get(i)));  
-				seriesData[j] = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+				if((""+datas.get(rootTargets.get(j)).get(persons.get(i))).equals("NaN")){
+					seriesData[j] = 0.00;
+				}else{
+					BigDecimal bd = new BigDecimal(datas.get(rootTargets.get(j)).get(persons.get(i)));  
+					seriesData[j] = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+				}
 			}
 			seriesJson.put("data", seriesData);
 			series.add(seriesJson);
