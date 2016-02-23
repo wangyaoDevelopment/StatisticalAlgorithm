@@ -54,4 +54,6 @@ public interface ScoreDao {
 	 */
 	public void updateScore(Score score);
 
+	public List<Score> getScoreByMarkPlanId(String string);
+
 }

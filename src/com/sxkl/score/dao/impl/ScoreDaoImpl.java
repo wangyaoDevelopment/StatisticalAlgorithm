@@ -72,4 +72,14 @@ public class ScoreDaoImpl extends HibernateDaoSupport implements ScoreDao{
 		this.getHibernateTemplate().update(temp);
 	}
 
+	public List<Score> getScoreByMarkPlanId(String markPlanId) {
+		String hql = "from Score s where s.markPlan.id=? order by s.target.level asc";
+		String[] param = new String[]{markPlanId};
+		List<Score> scores =  (List<Score>) this.getHibernateTemplate().find(hql, param);
+		if(scores == null){
+			return new ArrayList<Score>();
+		}
+		return scores;
+	}
+
 }

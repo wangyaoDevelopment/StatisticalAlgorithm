@@ -58,4 +58,6 @@ public interface ScoreService {
 	 */
 	public String statisticsCharByLevel(String markPlanId, int level);
 
+	public String test();
+
 }

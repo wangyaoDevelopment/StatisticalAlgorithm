@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.kingbase.common.utils.StatisticalAlgorithmUtils;
 import com.sxkl.common.utils.IDUtils;
 import com.sxkl.markplan.dao.MarkPlanDao;
 import com.sxkl.markplan.model.MarkPlan;
@@ -394,5 +395,36 @@ public class ScoreServiceImpl implements ScoreService{
 			e.printStackTrace();
 		}
 		return json.toString();
+	}
+
+	public String test() {
+		List<Target> targets = this.targetDaoImpl.getTargetsByLevel(1);
+		List<String> targetIds = new ArrayList<String>();
+		for(Target target : targets){
+			targetIds.add(target.getId());
+		}
+		List<String> personIds = new ArrayList<String>();
+		for(int i = 1; i < 4; i++){
+			personIds.add(i+"");
+		}
+		List<Score> scores = this.scoreDaoImpl.getScoreByMarkPlanId("00708cf1-48fe-43d9-b0dd-4f13f100");
+		List<Map<String,Object>> datas = new ArrayList<Map<String,Object>>();
+		for(Score score : scores){
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("proficientId", score.getPerson().getId());
+			map.put("targetId", score.getTarget().getId());
+			map.put("score", score.getScore());
+			datas.add(map);
+		}
+//		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByTarget(targetIds, personIds, datas);
+		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByAll(targetIds, personIds, datas);		
+		for(String targetId : targetIds){
+			Map<String,Double> map = result.get(targetId);
+			for(String personId : personIds){
+				System.out.print(map.get(personId)+"("+personId+")  ");
+			}
+			System.out.println();
+		}
+		return null;
 	}
 }

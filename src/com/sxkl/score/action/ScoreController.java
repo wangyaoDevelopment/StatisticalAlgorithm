@@ -99,4 +99,11 @@ public class ScoreController {
 	public String statisticsCharByLevel(String markPlanId,int level) {
 		return this.scoreServiceImpl.statisticsCharByLevel(markPlanId,level);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/test")
+	public String test(){
+		return this.scoreServiceImpl.test();
+		
+	}
 }
