@@ -416,8 +416,8 @@ public class ScoreServiceImpl implements ScoreService{
 			map.put("score", score.getScore());
 			datas.add(map);
 		}
-//		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByTarget(targetIds, personIds, datas);
-		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByAll(targetIds, personIds, datas);		
+		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByTarget(targetIds, personIds, datas,10.0,100.0);
+//	    Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByAll(targetIds, personIds, datas,20.0,100.0);		
 		for(String targetId : targetIds){
 			Map<String,Double> map = result.get(targetId);
 			for(String personId : personIds){

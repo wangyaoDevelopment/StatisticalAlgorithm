@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class StatisticalAlgorithmUtils {
 	
@@ -15,9 +17,11 @@ public class StatisticalAlgorithmUtils {
 	 * @param targetIds 指标项ID
 	 * @param proficientIds 打分专家ID
 	 * @param scores 某主题的所有打分  proficientId  targetId score
+	 * @param ymin 指定区间最小值
+	 * @param ymax 指定区间最大值
 	 * @return 归一化分数
 	 */
-	public static Map<String,Map<String,Double>> getNormalizedScoreByTarget(List<String> targetIds,List<String> proficientIds,List<Map<String,Object>> scores){
+	public static Map<String,Map<String,Double>> getNormalizedScoreByTarget(List<String> targetIds,List<String> proficientIds,List<Map<String,Object>> scores,double ymin,double ymax){
 		//Map<String,Double> scoresTemp = congurateScores(targetIds,proficientIds,scores);
 		Map<String, Map<String, Double>> map = new HashMap<String, Map<String, Double>>();
 		for(String targetId : targetIds){
@@ -26,9 +30,79 @@ public class StatisticalAlgorithmUtils {
 				double temp = getProficientTargetScore(proficientId,targetId,scores);
 				scoresTemp.put(proficientId, temp);
 			}
-			map.put(targetId, calculateNormalizedScoreByTarget(scoresTemp,proficientIds));
+			map.put(targetId, calculateNormalizedScoreByTarget(scoresTemp,proficientIds,ymin,ymax));
 		}
 		return map;
+	}
+	
+	/**
+	 * 获取归一化分数(采样范围为单指标数据,有层次结构)
+	 * @param targets 指定层次指标项 targetId  parentId (weight:程序计算,后续添加)
+	 * @param proficientIds 打分专家ID
+	 * @param scores 某主题的所有打分  proficientId  targetId score
+	 * @param weight 指标权重 targetId weight
+	 * @param ymin 指定区间最小值
+	 * @param ymax 指定区间最大值
+	 * @return 归一化分数
+	 */
+	public static Map<String,Map<String,Double>> getNormalizedScoreByTargetAndLevel(
+			  List<Map<String,String>> targets,List<String> proficientIds,
+			  List<Map<String,Object>> scores,List<Map<String,Object>> weights, 
+			  double ymin,double ymax){
+		List<String> rootTargetIds = getRootTargetIds(targets);
+		List<Map<String,String>> targetsWT = getTargetsWithWeight(targets,weights);
+		List<Map<String, Object>> datas = congurateScores(targetsWT,rootTargetIds,proficientIds,scores,weights);
+		return getNormalizedScoreByTarget(rootTargetIds, proficientIds, datas,ymin,ymax);
+	}
+	
+	private static List<Map<String, String>> getTargetsWithWeight(
+			List<Map<String, String>> targets, List<Map<String, Object>> weights) {
+		List<Map<String,String>> results = new ArrayList<Map<String,String>>();
+		for(Map<String, String> target : targets){
+			Map<String, String> data = new HashMap<String,String>();
+			data.put("targetId", target.get("targetId"));
+			data.put("parentId", target.get("parentId"));
+			for(Map<String, Object> weight : weights){
+				if(target.get("targetId").equals(weight.get("targetId"))){
+					data.put("weight", weight.get("weight")+"");
+				}
+			}
+			results.add(data);
+		}
+		return results;
+	}
+
+	private static List<Map<String, Object>> congurateScores(
+			List<Map<String, String>> targetsWT,List<String> rootTargetIds, 
+			List<String> proficientIds, List<Map<String, Object>> scores,List<Map<String, Object>> weights) {
+		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+		//计算出每个根节点得分
+		for(String rootTargetId : rootTargetIds){
+			Map<String, Object> data = new HashMap<String,Object>();
+			double scoreNum = 0;
+			for(Map<String, Object> score : scores){
+				for(Map<String, String> target : targetsWT){
+					if(score.get("targetId").equals(target.get("targetId")) && target.get("parentId").equals(rootTargetId)){
+						scoreNum += (Double.valueOf(score.get("score")+"")) * (Double.valueOf(target.get("weight")));
+					}
+				}
+			}
+			data.put(rootTargetId, scoreNum);
+			datas.add(data);
+		}
+		return datas;
+	}
+
+	private static List<String> getRootTargetIds(List<Map<String, String>> targets) {
+		//遍历出所有根节点
+		Set<String> rootTargetIdTemp =  new HashSet<String>();
+		for(Map<String, String> map : targets){
+			if(map.get("parentId") != null){
+				rootTargetIdTemp.add(map.get("parentId"));
+			}
+		}
+		List<String> rootTargetIds = new ArrayList<String>(rootTargetIdTemp);
+		return rootTargetIds;
 	}
 
 	private static double getProficientTargetScore(String proficientId,String targetId, List<Map<String, Object>> scores) {
@@ -43,7 +117,7 @@ public class StatisticalAlgorithmUtils {
 	}
 
 	private static Map<String, Double> calculateNormalizedScoreByTarget(
-			Map<String, Double> scoresTemp, List<String> proficientIds) {
+			Map<String, Double> scoresTemp, List<String> proficientIds, double ymin, double ymax) {
 		double sum = 0;//所有人总分
 		for (Map.Entry<String, Double> entry : scoresTemp.entrySet()) {
 			sum += entry.getValue();
@@ -57,7 +131,7 @@ public class StatisticalAlgorithmUtils {
 		//求标准方差
 		Map<String,Double> standardVariance = getStandardVariance(scoresTemp,avg,averageVarianceSqrt,proficientIds);
 		//求归一化分数
-		Map<String,Double> normalizedScore = getNormalizedScore(proficientIds,standardVariance);
+		Map<String,Double> normalizedScore = getNormalizedScore(proficientIds,standardVariance,ymin,ymax);
 		return normalizedScore;
 	}
 
@@ -82,9 +156,7 @@ public class StatisticalAlgorithmUtils {
 	}
 	
 	private static Map<String, Double> getNormalizedScore(
-			List<String> proficientIds, Map<String, Double> standardVariance) {
-		double ymax = 100;
-		double ymin = 10;
+			List<String> proficientIds, Map<String, Double> standardVariance, double ymin, double ymax) {
 		Collection<Double> datas = standardVariance.values();
 		double xmax = Collections.max(datas);
 		double xmin = Collections.min(datas);
@@ -92,42 +164,57 @@ public class StatisticalAlgorithmUtils {
 		for(String proficientId : proficientIds){
 			double data = standardVariance.get(proficientId);
 			double value = ymin + ((ymax-ymin)/(xmax-xmin))*(data-xmin);
-			result.put(proficientId, value);
+			BigDecimal bd = new BigDecimal(Double.valueOf(value));  
+			result.put(proficientId, bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 		}
 		return result;
 	}
+	
 	/**
 	 * 获取归一化分数(采样范围为全部指标数据,无层次结构)
 	 * @param targetIds 指标项ID
 	 * @param proficientIds 打分专家ID
 	 * @param scores 某主题的所有打分  proficientId  targetId score
+	 * @param ymin 指定区间最小值
+	 * @param ymax 指定区间最大值
 	 * @return 归一化分数
 	 */
-	public static Map<String,Map<String,Double>> getNormalizedScoreByAll(List<String> targetIds,List<String> proficientIds,List<Map<String,Object>> scores){
+	public static Map<String,Map<String,Double>> getNormalizedScoreByAll(List<String> targetIds,List<String> proficientIds,List<Map<String,Object>> scores,double ymin,double ymax){
 		//Map<String,Double> scoresTemp = congurateScores(targetIds,proficientIds,scores);
 		Map<String, Map<String, Double>> map = new HashMap<String, Map<String, Double>>();
 		for(String targetId : targetIds){
-//			Map<String,Double> scoresTemp = new HashMap<String,Double>();
-//			for(String proficientId : proficientIds){
-//				double temp = getProficientTargetScore(proficientId,targetId,scores);
-//				scoresTemp.put(proficientId, temp);
-//			}
 			map.put(targetId, calculateZFractionByAll(scores,targetId,proficientIds));
 		}
-		return getNormalizedScoreAll(map,targetIds,proficientIds);
+		return getNormalizedScoreAll(map,targetIds,proficientIds,ymin,ymax);
+	}
+	/**
+	 * 获取归一化分数(采样范围为全部指标数据,有层次结构)
+	 * @param targets 指定层次指标项 targetId  parentId (weight:程序计算,后续添加)
+	 * @param proficientIds 打分专家ID
+	 * @param scores 某主题的所有打分  proficientId  targetId score
+	 * @param weight 指标权重 targetId weight
+	 * @param ymin 指定区间最小值
+	 * @param ymax 指定区间最大值
+	 * @return 归一化分数
+	 */
+	public static Map<String,Map<String,Double>> getNormalizedScoreByAllAndLevel(
+			  List<Map<String,String>> targets,List<String> proficientIds,
+			  List<Map<String,Object>> scores,List<Map<String,Object>> weights, 
+			  double ymin,double ymax){
+		List<String> rootTargetIds = getRootTargetIds(targets);
+		List<Map<String,String>> targetsWT = getTargetsWithWeight(targets,weights);
+		List<Map<String, Object>> datas = congurateScores(targetsWT,rootTargetIds,proficientIds,scores,weights);
+		return getNormalizedScoreByAll(rootTargetIds, proficientIds, datas,ymin,ymax);
 	}
 
 	private static Map<String, Map<String, Double>> getNormalizedScoreAll(
 			Map<String, Map<String, Double>> map, List<String> targetIds,
-			List<String> proficientIds) {
+			List<String> proficientIds,double ymin,double ymax) {
 		Map<String, Map<String, Double>> result = new HashMap<String, Map<String, Double>>();
 		List<Double> datas = new ArrayList<Double>();
 		for(String targetId : targetIds){
 			datas.addAll(map.get(targetId).values());
 		}
-		
-		double ymax = 100;
-		double ymin = 10;
 		double xmax = Collections.max(datas);
 		double xmin = Collections.min(datas);
 		for(String targetId : targetIds){
@@ -136,7 +223,8 @@ public class StatisticalAlgorithmUtils {
 			for(String proficientId : proficientIds){
 				double data = dataTemp.get(proficientId);
 				double value = ymin + ((ymax-ymin)/(xmax-xmin))*(data-xmin);
-				resultTemp.put(proficientId, value);
+				BigDecimal bd = new BigDecimal(Double.valueOf(value+""));  
+				resultTemp.put(proficientId, bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 			}
 			result.put(targetId, resultTemp);
 		}
