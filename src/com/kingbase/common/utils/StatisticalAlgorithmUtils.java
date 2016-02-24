@@ -78,17 +78,21 @@ public class StatisticalAlgorithmUtils {
 		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
 		//计算出每个根节点得分
 		for(String rootTargetId : rootTargetIds){
-			Map<String, Object> data = new HashMap<String,Object>();
-			double scoreNum = 0;
-			for(Map<String, Object> score : scores){
-				for(Map<String, String> target : targetsWT){
-					if(score.get("targetId").equals(target.get("targetId")) && target.get("parentId").equals(rootTargetId)){
-						scoreNum += (Double.valueOf(score.get("score")+"")) * (Double.valueOf(target.get("weight")));
+			for(String proficientId : proficientIds){
+				Map<String, Object> data = new HashMap<String,Object>();
+				double scoreNum = 0;
+				for(Map<String, Object> score : scores){
+					for(Map<String, String> target : targetsWT){
+						if(score.get("targetId").equals(target.get("targetId")) && target.get("parentId").equals(rootTargetId) && score.get("proficientId").equals(proficientId)){
+							scoreNum += (Double.valueOf(score.get("score")+"")) * (Double.valueOf(target.get("weight")));
+						}
 					}
 				}
+				data.put("targetId", rootTargetId);
+				data.put("proficientId", proficientId);
+				data.put("score", scoreNum);
+				datas.add(data);
 			}
-			data.put(rootTargetId, scoreNum);
-			datas.add(data);
 		}
 		return datas;
 	}

@@ -397,6 +397,7 @@ public class ScoreServiceImpl implements ScoreService{
 		return json.toString();
 	}
 
+	
 	public String test() {
 		List<Target> targets = this.targetDaoImpl.getTargetsByLevel(1);
 		List<String> targetIds = new ArrayList<String>();
@@ -407,7 +408,7 @@ public class ScoreServiceImpl implements ScoreService{
 		for(int i = 1; i < 4; i++){
 			personIds.add(i+"");
 		}
-		List<Score> scores = this.scoreDaoImpl.getScoreByMarkPlanId("00708cf1-48fe-43d9-b0dd-4f13f100");
+		List<Score> scores = this.scoreDaoImpl.getScoreByMarkPlanId("d644be11-42c7-4fe9-82a7-6c01121d");
 		List<Map<String,Object>> datas = new ArrayList<Map<String,Object>>();
 		for(Score score : scores){
 			Map<String,Object> map = new HashMap<String,Object>();
@@ -427,4 +428,58 @@ public class ScoreServiceImpl implements ScoreService{
 		}
 		return null;
 	}
+	
+	/**
+	 * 获取归一化分数(采样范围为单指标数据,有层次结构)
+	 * @param targets 指定层次指标项 targetId  parentId (weight:程序计算,后续添加)
+	 * @param proficientIds 打分专家ID
+	 * @param scores 某主题的所有打分  proficientId  targetId score
+	 * @param weight 指标权重 targetId weight
+	 * @param ymin 指定区间最小值
+	 * @param ymax 指定区间最大值
+	 * @return 归一化分数
+	 */
+	public String levelTest(){
+		List<Target> levelTargets = this.targetDaoImpl.getTargetsByLevel(2);
+		List<Map<String,String>> targets = new ArrayList<Map<String,String>>();
+		for(Target target : levelTargets){
+			Map<String,String> map = new HashMap<String,String>();
+			map.put("targetId", target.getId());
+			map.put("parentId", target.getParent().getId());
+			targets.add(map);
+		}
+		List<String> personIds = new ArrayList<String>();
+		for(int i = 1; i < 4; i++){
+			personIds.add(i+"");
+		}
+		List<Score> scores = this.scoreDaoImpl.getScoreByMarkPlanId("d644be11-42c7-4fe9-82a7-6c01121d");
+		List<Map<String,Object>> datas = new ArrayList<Map<String,Object>>();
+		for(Score score : scores){
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("proficientId", score.getPerson().getId());
+			map.put("targetId", score.getTarget().getId());
+			map.put("score", score.getScore());
+			datas.add(map);
+		}
+		List<Map<String,Object>> weights = new ArrayList<Map<String,Object>>();
+		List<TargetData> targetDatas = this.targetDaoImpl.getTargetDatasByMarkPlanId("d644be11-42c7-4fe9-82a7-6c01121d");
+		for(TargetData targetData : targetDatas){
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("targetId", targetData.getTarget().getId());
+			map.put("weight", targetData.getWeight());
+			weights.add(map);
+		}
+//		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByTargetAndLevel(targets, personIds, datas, weights, 10.0,100.0);
+	    Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByAllAndLevel(targets, personIds, datas, weights, 10.0,100.0);		
+		List<Target> rootTargets = this.targetDaoImpl.getTargetsByLevel(1);
+		for(Target target : rootTargets){
+			Map<String,Double> map = result.get(target.getId());
+			for(String personId : personIds){
+				System.out.print(map.get(personId)+"("+personId+")  ");
+			}
+			System.out.println();
+		}
+		return null;
+	}
+	
 }

@@ -103,7 +103,7 @@ public class ScoreController {
 	@ResponseBody
 	@RequestMapping(value="/test")
 	public String test(){
-		return this.scoreServiceImpl.test();
-		
+//		return this.scoreServiceImpl.test();
+		return this.scoreServiceImpl.levelTest();
 	}
 }

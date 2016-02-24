@@ -60,4 +60,6 @@ public interface ScoreService {
 
 	public String test();
 
+	public String levelTest();
+
 }
