@@ -469,8 +469,14 @@ public class ScoreServiceImpl implements ScoreService{
 			map.put("weight", targetData.getWeight());
 			weights.add(map);
 		}
-//		Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByTargetAndLevel(targets, personIds, datas, weights, 10.0,100.0);
-	    Map<String,Map<String,Double>> result = StatisticalAlgorithmUtils.getNormalizedScoreByAllAndLevel(targets, personIds, datas, weights, 10.0,100.0);		
+		long start = System.currentTimeMillis();
+		Map<String,Map<String,Double>> result = null;
+		for(int i = 0; i < 1000; i++){
+			result = StatisticalAlgorithmUtils.getNormalizedScoreByAllAndLevel(targets, personIds, datas, weights, 10.0,100.0);	
+//			result = StatisticalAlgorithmUtils.getNormalizedScoreByTargetAndLevel(targets, personIds, datas, weights, 10.0,100.0);
+	    }
+		long end = System.currentTimeMillis();
+		System.out.println(end-start);
 		List<Target> rootTargets = this.targetDaoImpl.getTargetsByLevel(1);
 		for(Target target : rootTargets){
 			Map<String,Double> map = result.get(target.getId());
