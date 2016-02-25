@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Z分数、层次结构算法工具类
+ * @author wangyao
+ * @date 2016-02-19
+ */
 public class StatisticalAlgorithmUtils {
 	
 	/**
